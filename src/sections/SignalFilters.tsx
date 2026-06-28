@@ -64,21 +64,27 @@ export function SignalFilters() {
                       {group.title}
                     </Text>
                     <HStack gap="2" flexWrap="wrap">
-                      {group.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          bg="white/15"
-                          color="white"
-                          borderRadius="md"
-                          fontSize="2xs"
-                          px="2"
-                          py="0.5"
-                          border="1px solid"
-                          borderColor="white/20"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
+                      {group.tags.map((tag) => {
+                        const dpeMatch = tag.match(/^DPE\s([A-G])$/)
+                        if (dpeMatch) {
+                          return <DpeBadge key={tag} grade={dpeMatch[1]} compact />
+                        }
+                        return (
+                          <Badge
+                            key={tag}
+                            bg="white/15"
+                            color="white"
+                            borderRadius="md"
+                            fontSize="2xs"
+                            px="2"
+                            py="0.5"
+                            border="1px solid"
+                            borderColor="white/20"
+                          >
+                            {tag}
+                          </Badge>
+                        )
+                      })}
                     </HStack>
                   </Box>
                 ))}
@@ -152,26 +158,15 @@ export function SignalFilters() {
                           {lead.manager}
                         </Text>
                       </Box>
-                      <HStack gap="2">
-                        <Badge
-                          bg={lead.match >= 80 ? "#23c55e" : "#23c55e/60"}
-                          color="white"
-                          borderRadius="md"
-                          fontSize="2xs"
-                          px="2"
-                        >
-                          {lead.match}%
-                        </Badge>
-                        <Badge
-                          bg="white/10"
-                          color="white"
-                          borderRadius="md"
-                          fontSize="2xs"
-                          px="2"
-                        >
-                          {lead.potential} EUR
-                        </Badge>
-                      </HStack>
+                      <Badge
+                        bg={lead.match >= 80 ? "#23c55e" : "#23c55e/60"}
+                        color="white"
+                        borderRadius="md"
+                        fontSize="2xs"
+                        px="2"
+                      >
+                        {lead.match}%
+                      </Badge>
                     </Flex>
                     <HStack gap="2" mt="2">
                       <DpeBadge grade={lead.dpe} compact />
