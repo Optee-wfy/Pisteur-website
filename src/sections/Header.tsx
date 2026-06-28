@@ -14,13 +14,21 @@ import {
 } from "react-icons/lu"
 import { Link, useLocation } from "react-router-dom"
 
-const navLinks = [
+// Liens AVANT le dropdown "Par métier"
+const navBefore = [
   { label: "Comment ça marche", href: "/comment-ca-marche" },
-  { label: "Nos données", href: "/donnees" },
-  { label: "Tarifs", href: "/tarifs" },
-  { label: "Cas d'usage", href: "/cas-usage" },
-  { label: "Blog", href: "/blog" },
 ]
+
+// Liens APRÈS le dropdown "Par métier"
+const navAfter = [
+  { label: "Nos données", href: "/donnees" },
+  { label: "Cas d'usage", href: "/cas-usage" },
+  { label: "Tarifs", href: "/tarifs" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+]
+
+const navLinks = [...navBefore, ...navAfter]
 
 const verticals = [
   {
@@ -141,6 +149,23 @@ export function Header() {
 
         {/* Nav desktop */}
         <HStack gap="5" display={{ base: "none", lg: "flex" }}>
+
+          {/* Liens avant le dropdown */}
+          {navBefore.map((link) => (
+            <Box key={link.href} asChild>
+              <Link
+                to={link.href}
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: location.pathname === link.href ? 700 : 500,
+                  color: location.pathname === link.href ? "#000d4d" : "#323878",
+                  textDecoration: "none",
+                }}
+              >
+                {link.label}
+              </Link>
+            </Box>
+          ))}
 
           {/* Dropdown "Par métier" */}
           <Box position="relative" ref={dropdownRef}>
@@ -278,8 +303,8 @@ export function Header() {
             )}
           </Box>
 
-          {/* Liens classiques */}
-          {navLinks.map((link) => (
+          {/* Liens après le dropdown */}
+          {navAfter.map((link) => (
             <Box key={link.href} asChild>
               <Link
                 to={link.href}
@@ -342,6 +367,27 @@ export function Header() {
           borderColor="gray.100"
         >
           <Flex direction="column" gap="0">
+
+            {/* Liens avant le dropdown — mobile */}
+            {navBefore.map((link) => (
+              <Box key={link.href} asChild>
+                <Link
+                  to={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: location.pathname === link.href ? 700 : 500,
+                    color: location.pathname === link.href ? "#000d4d" : "#323878",
+                    textDecoration: "none",
+                    padding: "12px 0",
+                    borderBottom: "1px solid #f0f3f9",
+                    display: "block",
+                  }}
+                >
+                  {link.label}
+                </Link>
+              </Box>
+            ))}
 
             {/* Section Par métier — mobile */}
             <Box>
@@ -419,8 +465,8 @@ export function Header() {
               )}
             </Box>
 
-            {/* Liens classiques mobile */}
-            {navLinks.map((link) => (
+            {/* Liens après le dropdown — mobile */}
+            {navAfter.map((link) => (
               <Box key={link.href} asChild>
                 <Link
                   to={link.href}
