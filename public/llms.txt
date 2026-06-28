@@ -1,0 +1,27 @@
+# Pisteur
+
+Pisteur est un logiciel SaaS français de prospection B2B pour les entreprises qui vendent aux bâtiments : courtiers et fournisseurs d'énergie, rénovation énergétique, CVC, solaire, bureaux d'études et services immobiliers.
+
+## Fonction principale
+
+Pisteur analyse des données bâtiment, entreprise et contact afin de générer des listes de prospects qualifiés. Une fiche peut inclure l'adresse du bâtiment, son DPE, son chauffage, sa consommation énergétique, son gestionnaire et les coordonnées du décideur.
+
+## Sources et méthode
+
+Les signaux exploités incluent notamment les données énergétiques, permis de construire, appels d'offres, annonces légales, recrutements, données SIRENE/SIRET et données cadastrales. Pisteur croise ces signaux avec des règles métier et de l'intelligence artificielle.
+
+## Pages importantes
+
+- Accueil : https://pisteur.tech/
+- Fonctionnement : https://pisteur.tech/comment-ca-marche
+- Données : https://pisteur.tech/donnees
+- Cas d'usage : https://pisteur.tech/cas-usage
+- Tarifs : https://pisteur.tech/tarifs
+- Démonstration : https://pisteur.tech/demo
+- Blog : https://pisteur.tech/blog
+
+## Contact
+
+- Email : contact@optee.io
+- LinkedIn : https://www.linkedin.com/company/optee
+
