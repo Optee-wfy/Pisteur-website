@@ -1112,6 +1112,419 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
+// ── FaqManager ────────────────────────────────────────────────────────────────
+
+const PAGE_LABELS: Record<string, string> = {
+  "/": "Accueil",
+  "/comment-ca-marche": "Comment ça marche",
+  "/donnees": "Données",
+  "/tarifs": "Tarifs",
+  "/cas-usage": "Cas d'usage",
+  "/demo": "Démo",
+  "/blog": "Blog",
+  "/support": "Support",
+};
+
+function pageLabel(path: string): string {
+  return PAGE_LABELS[path] ?? path;
+}
+
+function FaqManager({
+  rows,
+  code,
+  onDone,
+  loading,
+}: {
+  rows: Row[];
+  code: string;
+  onDone: () => void;
+  loading: boolean;
+}) {
+  const pages = useMemo(
+    () =>
+      [...new Set(rows.map((r) => String(r.page_path || "/")))].sort((a, b) =>
+        a.localeCompare(b, "fr"),
+      ),
+    [rows],
+  );
+
+  const [selectedPage, setSelectedPage] = useState<string | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ question: "", answer: "", page_path: "/" });
+  const [addPage, setAddPage] = useState("/");
+  const [addQuestion, setAddQuestion] = useState("");
+  const [addAnswer, setAddAnswer] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  // Auto-sélectionner la première page dès le chargement
+  useEffect(() => {
+    if (pages.length && selectedPage === null) setSelectedPage(pages[0]);
+  }, [pages, selectedPage]);
+
+  const displayed = useMemo(
+    () => rows.filter((r) => String(r.page_path || "/") === selectedPage),
+    [rows, selectedPage],
+  );
+
+  const startEdit = (row: Row) => {
+    setEditingId(row.id);
+    setEditForm({
+      question: String(row.question || ""),
+      answer: String(row.answer || ""),
+      page_path: String(row.page_path || "/"),
+    });
+  };
+
+  const saveEdit = async (id: string) => {
+    setBusy(true);
+    try {
+      await adminRequest(code, "faq", "PATCH", { id, ...editForm });
+      setEditingId(null);
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteRow = async (id: string) => {
+    if (!confirm("Supprimer cette question ?")) return;
+    await adminRequest(code, "faq", "DELETE", { id });
+    onDone();
+  };
+
+  const saveAdd = async () => {
+    if (!addQuestion.trim() || !addAnswer.trim()) return;
+    setBusy(true);
+    try {
+      await adminRequest(code, "faq", "POST", {
+        question: addQuestion,
+        answer: addAnswer,
+        page_path: addPage,
+        active: true,
+        sort_order: 0,
+      });
+      setAddQuestion("");
+      setAddAnswer("");
+      setShowAdd(false);
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (loading)
+    return (
+      <Flex py="20" justifyContent="center">
+        <Text color="gray.400">Chargement…</Text>
+      </Flex>
+    );
+
+  return (
+    <Box>
+      {/* ── Page pills ── */}
+      <Box
+        bg="white"
+        borderRadius="2xl"
+        border="1px solid #e8edf5"
+        p="4"
+        mb="5"
+      >
+        <Flex alignItems="center" justifyContent="space-between" mb="3">
+          <Text fontSize="sm" fontWeight="bold" color="#000d4d">
+            Pages
+          </Text>
+          <Text fontSize="xs" color="#9aaabb">
+            {rows.length} question{rows.length > 1 ? "s" : ""} au total
+          </Text>
+        </Flex>
+        <Flex gap="2" flexWrap="wrap">
+          {pages.map((path) => {
+            const count = rows.filter((r) => String(r.page_path || "/") === path).length;
+            const active = selectedPage === path;
+            return (
+              <Button
+                key={path}
+                size="sm"
+                onClick={() => { setSelectedPage(path); setShowAdd(false); setEditingId(null); }}
+                bg={active ? "#000d4d" : "#f0f3f9"}
+                color={active ? "white" : "#4b587c"}
+                border="1px solid"
+                borderColor={active ? "#000d4d" : "#e2e8f0"}
+                borderRadius="full"
+                fontWeight={active ? "bold" : "medium"}
+                px="4"
+                _hover={{ bg: active ? "#10226f" : "#e2e8f0", color: active ? "white" : "#000d4d" }}
+                gap="1.5"
+              >
+                {pageLabel(path)}
+                <Box
+                  as="span"
+                  px="1.5"
+                  py="0"
+                  borderRadius="full"
+                  bg={active ? "whiteAlpha.300" : "#d8e0ee"}
+                  color={active ? "white" : "#4b587c"}
+                  fontSize="2xs"
+                  fontWeight="bold"
+                  lineHeight="1.6"
+                  minW="18px"
+                  textAlign="center"
+                >
+                  {count}
+                </Box>
+              </Button>
+            );
+          })}
+          {!pages.length && (
+            <Text fontSize="sm" color="gray.400">Aucune FAQ enregistrée.</Text>
+          )}
+        </Flex>
+      </Box>
+
+      {/* ── Header section sélectionnée ── */}
+      {selectedPage && (
+        <Flex justifyContent="space-between" alignItems="center" mb="4">
+          <Box>
+            <Text fontSize="lg" fontWeight="extrabold" color="#000d4d">
+              {pageLabel(selectedPage)}
+            </Text>
+            <Text fontSize="xs" color="#9aaabb" fontFamily="mono">
+              {selectedPage}
+            </Text>
+          </Box>
+          <Button
+            size="sm"
+            bg="#00bd59"
+            color="white"
+            fontWeight="bold"
+            borderRadius="lg"
+            _hover={{ bg: "#00a84f" }}
+            _active={{ bg: "#008f43" }}
+            onClick={() => { setShowAdd((v) => !v); setEditingId(null); }}
+          >
+            {showAdd ? "Annuler" : "+ Ajouter une question"}
+          </Button>
+        </Flex>
+      )}
+
+      {/* ── Formulaire d'ajout ── */}
+      {showAdd && (
+        <Box
+          bg="white"
+          border="2px solid #00bd59"
+          borderRadius="xl"
+          p="5"
+          mb="4"
+        >
+          <Text fontWeight="bold" color="#000d4d" mb="3" fontSize="sm">
+            Nouvelle question — {pageLabel(addPage)}
+          </Text>
+          <Grid gap="3">
+            <Box>
+              <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Page cible</Text>
+              <NativeSelectRoot>
+                <NativeSelectField
+                  value={addPage}
+                  onChange={(e) => setAddPage(e.target.value)}
+                  bg="#f0f3f9"
+                  color="#111827"
+                  borderColor="#e2e8f0"
+                >
+                  {(pages.length ? pages : ["/"]).map((p) => (
+                    <option key={p} value={p}>{pageLabel(p)} ({p})</option>
+                  ))}
+                </NativeSelectField>
+              </NativeSelectRoot>
+            </Box>
+            <Box>
+              <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Question</Text>
+              <Input
+                placeholder="Ex : Comment fonctionne Pisteur ?"
+                value={addQuestion}
+                onChange={(e) => setAddQuestion(e.target.value)}
+                bg="#f8fafb"
+              />
+            </Box>
+            <Box>
+              <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Réponse</Text>
+              <Textarea
+                placeholder="Réponse complète…"
+                value={addAnswer}
+                onChange={(e) => setAddAnswer(e.target.value)}
+                minH="100px"
+                bg="#f8fafb"
+              />
+            </Box>
+          </Grid>
+          <HStack mt="3" gap="2">
+            <Button
+              bg="#00bd59"
+              color="white"
+              fontWeight="bold"
+              _hover={{ bg: "#00a84f" }}
+              onClick={saveAdd}
+              disabled={busy || !addQuestion.trim() || !addAnswer.trim()}
+              size="sm"
+            >
+              {busy ? "Enregistrement…" : "Publier la question"}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              color="#586580"
+              onClick={() => setShowAdd(false)}
+            >
+              Annuler
+            </Button>
+          </HStack>
+        </Box>
+      )}
+
+      {/* ── Liste des questions ── */}
+      {selectedPage && (
+        <VStack alignItems="stretch" gap="3">
+          {displayed.map((row) => {
+            const isEditing = editingId === row.id;
+            return (
+              <Box
+                key={row.id}
+                bg="white"
+                borderRadius="xl"
+                border="1px solid"
+                borderColor={isEditing ? "#071FD6" : "#e8edf5"}
+                overflow="hidden"
+                transition="border-color .15s"
+              >
+                {isEditing ? (
+                  /* ── Mode édition inline ── */
+                  <Box p="5">
+                    <Text fontSize="xs" fontWeight="bold" color="#071FD6" mb="3">
+                      Modification
+                    </Text>
+                    <Grid gap="3">
+                      <Box>
+                        <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Question</Text>
+                        <Input
+                          value={editForm.question}
+                          onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
+                          bg="#f8fafb"
+                          fontWeight="medium"
+                        />
+                      </Box>
+                      <Box>
+                        <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Réponse</Text>
+                        <Textarea
+                          value={editForm.answer}
+                          onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })}
+                          minH="120px"
+                          bg="#f8fafb"
+                        />
+                      </Box>
+                      <Box>
+                        <Text fontSize="xs" color="#586580" mb="1" fontWeight="medium">Page cible</Text>
+                        <NativeSelectRoot>
+                          <NativeSelectField
+                            value={editForm.page_path}
+                            onChange={(e) => setEditForm({ ...editForm, page_path: e.target.value })}
+                            bg="#f0f3f9"
+                            color="#111827"
+                            borderColor="#e2e8f0"
+                          >
+                            {(pages.length ? pages : ["/"]).map((p) => (
+                              <option key={p} value={p}>{pageLabel(p)} ({p})</option>
+                            ))}
+                          </NativeSelectField>
+                        </NativeSelectRoot>
+                      </Box>
+                    </Grid>
+                    <HStack mt="3" gap="2">
+                      <Button
+                        size="sm"
+                        bg="#071FD6"
+                        color="white"
+                        fontWeight="bold"
+                        _hover={{ bg: "#0518a8" }}
+                        onClick={() => saveEdit(row.id)}
+                        disabled={busy}
+                      >
+                        {busy ? "Enregistrement…" : "Sauvegarder"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        color="#586580"
+                        onClick={() => setEditingId(null)}
+                      >
+                        Annuler
+                      </Button>
+                    </HStack>
+                  </Box>
+                ) : (
+                  /* ── Mode lecture ── */
+                  <Flex p="5" gap="4" alignItems="flex-start">
+                    <Box flex="1" minW="0">
+                      <Text fontWeight="bold" color="#000d4d" mb="1.5" fontSize="sm">
+                        {String(row.question || "Question")}
+                      </Text>
+                      <Text fontSize="sm" color="#586580" lineHeight="1.65" whiteSpace="pre-wrap">
+                        {String(row.answer || "")}
+                      </Text>
+                    </Box>
+                    <HStack gap="2" flexShrink={0}>
+                      <Button
+                        size="sm"
+                        {...lightButtonStyles}
+                        onClick={() => startEdit(row)}
+                      >
+                        Modifier
+                      </Button>
+                      <Button
+                        size="sm"
+                        bg="#fee2e2"
+                        color="#dc2626"
+                        border="1px solid #fecaca"
+                        fontWeight="semibold"
+                        _hover={{ bg: "#dc2626", color: "white" }}
+                        onClick={() => deleteRow(row.id)}
+                      >
+                        Supprimer
+                      </Button>
+                    </HStack>
+                  </Flex>
+                )}
+              </Box>
+            );
+          })}
+          {!displayed.length && !showAdd && (
+            <Box
+              bg="white"
+              borderRadius="xl"
+              border="1px dashed #d1d9ef"
+              p="8"
+              textAlign="center"
+            >
+              <Text color="#9aaabb" fontSize="sm">
+                Aucune question pour cette page.
+              </Text>
+              <Button
+                mt="3"
+                size="sm"
+                bg="#00bd59"
+                color="white"
+                _hover={{ bg: "#00a84f" }}
+                onClick={() => setShowAdd(true)}
+              >
+                + Ajouter la première question
+              </Button>
+            </Box>
+          )}
+        </VStack>
+      )}
+    </Box>
+  );
+}
+
 // ── Editor ───────────────────────────────────────────────────────────────────
 
 function Editor({
@@ -1809,9 +2222,16 @@ export function AdminPage() {
           <Dashboard code={code} />
         ) : tab === "analytics" ? (
           <Analytics rows={rows} />
+        ) : tab === "faq" ? (
+          <FaqManager
+            rows={rows}
+            code={code}
+            onDone={() => load()}
+            loading={loading}
+          />
         ) : (
           <>
-            {["posts", "faq", "testimonials"].includes(tab) && (
+            {["posts", "testimonials"].includes(tab) && (
               <Editor resource={tab} code={code} onDone={() => load()} />
             )}
             <RowList
