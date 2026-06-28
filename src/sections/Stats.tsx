@@ -1,13 +1,17 @@
 import { Box, Flex, Text, VStack } from "@chakra-ui/react"
 import { motion } from "framer-motion"
 import { LuBuilding2, LuFilter, LuTarget, LuZap } from "react-icons/lu"
+import { LiveLeadCounter } from "@/components/LiveLeadCounter"
 import { stats } from "@/data/content"
+import { useLiveLeadCount } from "@/hooks/useLiveLeadCount"
 
 const MotionBox = motion.create(Box)
 
 const icons = [LuBuilding2, LuFilter, LuTarget, LuZap]
 
 export function Stats() {
+  const liveLeadCount = useLiveLeadCount()
+
   return (
     <Box py={{ base: "16", md: "20" }} px={{ base: "4", md: "6" }} bg="white">
       <Box maxW="7xl" mx="auto">
@@ -49,7 +53,7 @@ export function Stats() {
                     fontWeight="extrabold"
                     color="#000d4d"
                   >
-                    {stat.value}
+                    {stat.value ?? <LiveLeadCounter value={liveLeadCount} />}
                   </Text>
                   <Text fontSize="sm" color="gray.600">
                     {stat.label}

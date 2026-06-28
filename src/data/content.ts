@@ -7,9 +7,9 @@ export const navLinks = [
 ]
 
 export const stats = [
-  { value: "1,2M+", label: "Bâtiments analysés en France" },
+  { value: "32M+", label: "Bâtiments analysés en France" },
   { value: "100+", label: "Critères de filtrage signal bâtiment" },
-  { value: "2 884", label: "Leads générés depuis le lancement" },
+  { value: null, label: "Leads générés à ce jour" },
   { value: "100%", label: "Opérations réalisables par adresse" },
 ]
 
@@ -142,7 +142,7 @@ export const testimonials = [
     name: "Dirigeant",
     company: "Calomatech",
     role: "Dirigeant",
-    text: "La base de données est impressionnante. 1,2 million de bâtiments analysés, c'est un avantage concurrentiel énorme.",
+    text: "La base de données est impressionnante. 32 millions de bâtiments analysés, c'est un avantage concurrentiel énorme.",
     rating: 4,
   },
   {
@@ -200,7 +200,7 @@ export const pricingPlans = [
     popular: false,
     features: [
       "Moteur de recherche complet",
-      "1,2M actifs immobiliers",
+      "32M actifs immobiliers",
       "Assistant IA conversationnel",
       "Visualisation bâtiments",
     ],

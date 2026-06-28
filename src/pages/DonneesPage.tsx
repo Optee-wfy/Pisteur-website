@@ -3,6 +3,7 @@ import { DataInfra } from "@/sections/DataInfra"
 import { SignalFilters } from "@/sections/SignalFilters"
 import { PageHero } from "@/components/PageHero"
 import { FAQ } from "@/sections/FAQ"
+import { DataSourceLogos } from "@/sections/DataSourceLogos"
 
 export function DonneesPage() {
   return (
@@ -14,6 +15,7 @@ export function DonneesPage() {
         keywords={["base de données bâtiment", "données DPE", "données ENEDIS GRDF", "SIRENE SIRET", "prospection data B2B"]}
       />
       <PageHero eyebrow="DONNÉES PISTEUR" title="Les bonnes données. Au bon moment." description="Une infrastructure française qui relie données bâtimentaires, énergétiques, juridiques et contacts professionnels." />
+      <DataSourceLogos />
       <SignalFilters />
       <DataInfra />
       <FAQ pagePath="/donnees" />

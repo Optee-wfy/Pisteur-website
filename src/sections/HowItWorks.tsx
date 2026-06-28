@@ -58,15 +58,6 @@ export function HowItWorks() {
           textAlign="center"
         >
           <Text
-            fontSize="xs"
-            fontWeight="bold"
-            color="#059669"
-            letterSpacing="widest"
-            mb="4"
-          >
-            COMMENT ÇA MARCHE
-          </Text>
-          <Text
             fontSize={{ base: "3xl", md: "5xl" }}
             fontWeight="900"
             color="#071B63"

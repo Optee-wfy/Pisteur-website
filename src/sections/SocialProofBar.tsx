@@ -1,5 +1,7 @@
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/react"
 import { motion } from "framer-motion"
+import { LiveLeadCounter } from "@/components/LiveLeadCounter"
+import { useLiveLeadCount } from "@/hooks/useLiveLeadCount"
 import {
   LuBuilding2,
   LuShield,
@@ -11,9 +13,9 @@ import {
 const MotionBox = motion.create(Box)
 
 const items = [
-  { icon: LuBuilding2, value: "1,2M+", label: "bâtiments analysés" },
+  { icon: LuBuilding2, value: "32M+", label: "bâtiments analysés" },
   { icon: LuZap, value: "+12M", label: "signaux / mois" },
-  { icon: LuTarget, value: "2 884", label: "leads générés" },
+  { icon: LuTarget, value: null, label: "leads générés à ce jour" },
   { icon: LuTrendingUp, value: "+40%", label: "taux de conversion RDV" },
   { icon: LuShield, value: "95%", label: "précision des données" },
 ]
@@ -27,6 +29,8 @@ const dividerStyle = {
 }
 
 export function SocialProofBar() {
+  const liveLeadCount = useLiveLeadCount()
+
   return (
     <Box
       py={{ base: "10", md: "12" }}
@@ -71,7 +75,7 @@ export function SocialProofBar() {
                   letterSpacing="-0.04em"
                   lineHeight="1"
                 >
-                  {value}
+                  {value ?? <LiveLeadCounter value={liveLeadCount} />}
                 </Text>
                 <Text fontSize="xs" color="whiteAlpha.700" fontWeight="medium">
                   {label}

@@ -9,6 +9,7 @@ import { VerticalCards } from "@/sections/VerticalCards";
 import { Stats } from "@/sections/Stats";
 import { Testimonials } from "@/sections/Testimonials";
 import { CompetitorCompare } from "@/sections/CompetitorCompare";
+import { DataSourceLogos } from "@/sections/DataSourceLogos";
 
 export function HomePage() {
   return (
@@ -38,6 +39,7 @@ export function HomePage() {
       <Hero />
       <SocialProofBar />
       <MarketingStory />
+      <DataSourceLogos />
       <VerticalCards />
       <Logos />
       <Stats />

@@ -90,7 +90,7 @@ const verticalMap: Record<string, VerticalConfig> = {
     ],
     metrics: [
       { value: "2/3", label: "des RDV inutiles évités" },
-      { value: "1,2M+", label: "bâtiments analysés en France" },
+      { value: "32M+", label: "bâtiments analysés en France" },
       { value: "< 10 s", label: "pour obtenir un contact syndic" },
     ],
     useCases: [
@@ -137,7 +137,7 @@ const verticalMap: Record<string, VerticalConfig> = {
     seoDescription: "Pisteur identifie les toitures > 200 m² orientées sud, les tertiaires à forte consommation diurne et les bâtiments sans installation ENR existante.",
     keywords: ["leads solaire bâtiment", "prospection photovoltaïque", "autoconsommation tertiaire", "installation ENR bâtiment"],
     eyebrow: "SOLAIRE & ENR",
-    heroTitle: "1,2 million de toitures. Lesquelles valent le prospection ?",
+    heroTitle: "32 millions de toitures. Lesquelles valent la prospection ?",
     heroDescription: "Filtrez par surface de toiture, orientation, consommation diurne et absence d'installation existante. Pisteur calcule le potentiel de production et vous livre le décideur.",
     color: "#f59e0b",
     bg: "#fffbeb",
@@ -213,7 +213,7 @@ const verticalMap: Record<string, VerticalConfig> = {
       "Carences de gestion détectées",
     ],
     metrics: [
-      { value: "1,2M+", label: "actifs immobiliers référencés" },
+      { value: "32M+", label: "actifs immobiliers référencés" },
       { value: "2 884", label: "leads générés depuis le lancement" },
       { value: "+40%", label: "de taux de conversion en RDV" },
     ],

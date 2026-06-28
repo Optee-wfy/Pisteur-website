@@ -22,7 +22,6 @@ const navBefore = [
 // Liens APRÈS le dropdown "Par métier"
 const navAfter = [
   { label: "Nos données", href: "/donnees" },
-  { label: "Cas d'usage", href: "/cas-usage" },
   { label: "Tarifs", href: "/tarifs" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },

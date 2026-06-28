@@ -16,7 +16,7 @@ type FeatureValue = true | false | "partial"
 
 const features: { label: string; values: FeatureValue[] }[] = [
   { label: "Données DPE / énergie bâtiment",        values: [true,  false,   false,   false] },
-  { label: "1,2M+ bâtiments France",                values: [true,  false,   false,   false] },
+  { label: "32M+ bâtiments France",                 values: [true,  false,   false,   false] },
   { label: "Signaux ENEDIS / GRDF",                 values: [true,  false,   false,   false] },
   { label: "Score Match IA",                        values: [true,  false,   false,   false] },
   { label: "Email personnalisé IA",                 values: [true,  false,   false,   false] },
