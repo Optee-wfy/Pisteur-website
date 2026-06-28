@@ -40,13 +40,13 @@ import {
 type Row = Record<string, unknown> & { id: string; created_at?: string };
 
 const tabs = [
-  { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard },
-  { id: "contacts", label: "Contacts", icon: LuMail },
-  { id: "support", label: "Support", icon: LuMessageSquare },
-  { id: "posts", label: "Blog", icon: LuFileText },
-  { id: "analytics", label: "Statistiques", icon: LuActivity },
-  { id: "faq", label: "FAQ", icon: LuSettings },
-  { id: "testimonials", label: "Avis clients", icon: LuStar },
+  { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard, description: "Vue d'ensemble des métriques clés — trafic, leads entrants et activité récente du site." },
+  { id: "contacts", label: "Contacts", icon: LuMail, description: "Formulaires de contact reçus depuis le site — prospects à qualifier et relancer." },
+  { id: "support", label: "Support", icon: LuMessageSquare, description: "Demandes d'assistance envoyées par les utilisateurs, à traiter en priorité." },
+  { id: "posts", label: "Blog", icon: LuFileText, description: "Articles publiés sur le blog — créez, éditez et gérez votre contenu SEO." },
+  { id: "analytics", label: "Statistiques", icon: LuActivity, description: "Analyse du comportement visiteurs — pages vues, clics CTA, heures de pointe et sources." },
+  { id: "faq", label: "FAQ", icon: LuSettings, description: "Questions fréquentes affichées sur chaque page du site, organisées par section." },
+  { id: "testimonials", label: "Avis clients", icon: LuStar, description: "Témoignages clients publiés sur le site — gérez leur visibilité et leur contenu." },
 ];
 
 const lightButtonStyles = {
@@ -1525,195 +1525,499 @@ function FaqManager({
   );
 }
 
-// ── Editor ───────────────────────────────────────────────────────────────────
+// ── BlogEditor (plein écran) ──────────────────────────────────────────────────
 
-function Editor({
-  resource,
+function BlogEditor({
   code,
   onDone,
+  onCancel,
 }: {
-  resource: string;
   code: string;
   onDone: () => void;
+  onCancel: () => void;
 }) {
-  const [form, setForm] = useState<Record<string, string>>({
+  const [form, setForm] = useState({
     title: "",
     excerpt: "",
     content: "",
     image_alt: "",
     sources: "",
-    question: "",
-    answer: "",
-    quote: "",
-    author_name: "",
-    author_role: "",
-    company: "",
-    page_path: "/",
     status: "published",
   });
-  const [file, setFile] = useState<File | null>(null),
-    [busy, setBusy] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const inputRef = useState<HTMLInputElement | null>(null);
+
+  const handleImageFile = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setImagePreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const save = async () => {
+    if (!form.title.trim()) return;
     setBusy(true);
     try {
-      let payload: Record<string, unknown>;
-      if (resource === "posts") {
-        let image_url = "";
-        if (file) {
-          const converted = await imageToWebp(file, form.title);
-          image_url = (
-            await adminRequest(code, "posts", "POST", {
-              action: "upload-image",
-              ...converted,
-            })
-          ).url;
-        }
-        const sources = form.sources
-          .split("\n")
-          .map((line) => {
-            const [label, ...url] = line.split("|");
-            return { label: label?.trim(), url: url.join("|").trim() };
+      let image_url = "";
+      if (imageFile) {
+        const converted = await imageToWebp(imageFile, form.title);
+        image_url = (
+          await adminRequest(code, "posts", "POST", {
+            action: "upload-image",
+            ...converted,
           })
-          .filter(
-            (source) => source.label && /^https:\/\//.test(source.url),
-          );
-        payload = {
-          title: form.title,
-          slug: slugify(form.title),
-          excerpt: form.excerpt,
-          content: form.content,
-          image_url,
-          image_alt: form.image_alt,
-          sources,
-          status: form.status,
-          published_at: new Date().toISOString(),
-        };
-      } else if (resource === "faq")
-        payload = {
-          question: form.question,
-          answer: form.answer,
-          page_path: form.page_path,
-          active: true,
-          sort_order: 0,
-        };
-      else
-        payload = {
-          quote: form.quote,
-          name: form.author_name,
-          role: form.author_role,
-          company: form.company,
-          active: true,
-          sort_order: 0,
-        };
-      await adminRequest(code, resource, "POST", payload);
+        ).url;
+      }
+      const sources = form.sources
+        .split("\n")
+        .map((line) => {
+          const [label, ...url] = line.split("|");
+          return { label: label?.trim(), url: url.join("|").trim() };
+        })
+        .filter((s) => s.label && /^https:\/\//.test(s.url));
+      await adminRequest(code, "posts", "POST", {
+        title: form.title,
+        slug: slugify(form.title),
+        excerpt: form.excerpt,
+        content: form.content,
+        image_url,
+        image_alt: form.image_alt,
+        sources,
+        status: form.status,
+        published_at: new Date().toISOString(),
+      });
       onDone();
     } finally {
       setBusy(false);
     }
   };
+
   return (
-    <Box bg="white" p="5" borderRadius="xl" mb="6" border="1px solid #e8edf5">
-      <Text fontWeight="bold" color="#000d4d" mb="3">
-        Ajouter
-      </Text>
-      {resource === "posts" ? (
-        <Grid gap="3">
-          <Input
-            placeholder="Titre"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <Input
-            placeholder="Résumé"
-            value={form.excerpt}
-            onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-          />
-          <Textarea
-            minH="260px"
-            placeholder="Contenu de l'article (## pour un intertitre)"
-            value={form.content}
-            onChange={(e) => setForm({ ...form, content: e.target.value })}
-          />
-          <Textarea
-            placeholder={"Sources officielles, une par ligne :\nNom de la source | https://…"}
-            value={form.sources}
-            onChange={(e) => setForm({ ...form, sources: e.target.value })}
-          />
-          <Input
-            placeholder="Texte alternatif SEO de l'image"
-            value={form.image_alt}
-            onChange={(e) => setForm({ ...form, image_alt: e.target.value })}
-          />
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-        </Grid>
-      ) : resource === "faq" ? (
-        <Grid gap="3">
-          <Input
-            placeholder="Question"
-            value={form.question}
-            onChange={(e) => setForm({ ...form, question: e.target.value })}
-          />
-          <Textarea
-            placeholder="Réponse"
-            value={form.answer}
-            onChange={(e) => setForm({ ...form, answer: e.target.value })}
-          />
-          <Input
-            placeholder="Page (/tarifs, /donnees…)"
-            value={form.page_path}
-            onChange={(e) =>
-              setForm({ ...form, page_path: e.target.value })
-            }
-          />
-        </Grid>
-      ) : (
-        <Grid gap="3">
-          <Textarea
-            placeholder="Avis"
-            value={form.quote}
-            onChange={(e) => setForm({ ...form, quote: e.target.value })}
-          />
-          <Input
-            placeholder="Nom"
-            value={form.author_name}
-            onChange={(e) =>
-              setForm({ ...form, author_name: e.target.value })
-            }
-          />
-          <Input
-            placeholder="Fonction"
-            value={form.author_role}
-            onChange={(e) =>
-              setForm({ ...form, author_role: e.target.value })
-            }
-          />
-          <Input
-            placeholder="Entreprise"
-            value={form.company}
-            onChange={(e) => setForm({ ...form, company: e.target.value })}
-          />
-        </Grid>
-      )}
-      <Button
-        mt="3"
-        bg="#00bd59"
-        color="white"
-        _hover={{ bg: "#00a84f" }}
-        _active={{ bg: "#008f43" }}
-        onClick={save}
-        disabled={busy}
+    <Box>
+      {/* Barre d'actions */}
+      <Flex
+        align="center"
+        justify="space-between"
+        mb="6"
+        pb="5"
+        borderBottom="1px solid #e8edf5"
       >
-        {busy ? "Enregistrement…" : "Publier"}
-      </Button>
+        <Box>
+          <Text color="#00a84f" fontWeight="bold" fontSize="xs" letterSpacing="wide" mb="0.5">
+            NOUVEL ARTICLE
+          </Text>
+          <Text fontSize="xl" fontWeight="extrabold" color="#000d4d">
+            {form.title || "Sans titre"}
+          </Text>
+        </Box>
+        <HStack gap="2">
+          <NativeSelectRoot w="140px">
+            <NativeSelectField
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value })}
+              bg="#f0f3f9"
+              color="#111827"
+              borderColor="#e2e8f0"
+              fontSize="sm"
+            >
+              <option value="published">Publié</option>
+              <option value="draft">Brouillon</option>
+            </NativeSelectField>
+          </NativeSelectRoot>
+          <Button
+            size="sm"
+            variant="ghost"
+            color="#586580"
+            onClick={onCancel}
+            _hover={{ color: "#000d4d" }}
+          >
+            Annuler
+          </Button>
+          <Button
+            size="sm"
+            bg="#00bd59"
+            color="white"
+            fontWeight="bold"
+            _hover={{ bg: "#00a84f" }}
+            _active={{ bg: "#008f43" }}
+            onClick={save}
+            disabled={busy || !form.title.trim()}
+          >
+            {busy ? "Publication…" : form.status === "published" ? "Publier" : "Sauvegarder"}
+          </Button>
+        </HStack>
+      </Flex>
+
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 340px" }} gap="5" alignItems="start">
+        {/* Colonne principale */}
+        <VStack alignItems="stretch" gap="4">
+          <Box bg="white" p="5" borderRadius="xl" border="1px solid #e8edf5">
+            <Text fontSize="xs" color="#586580" fontWeight="bold" mb="2">TITRE *</Text>
+            <Input
+              placeholder="Titre de l'article…"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              fontSize="lg"
+              fontWeight="bold"
+              color="#000d4d"
+              border="none"
+              bg="transparent"
+              p="0"
+              _focus={{ outline: "none", boxShadow: "none" }}
+              _placeholder={{ color: "#cdd5e0", fontWeight: "normal" }}
+            />
+          </Box>
+
+          <Box bg="white" p="5" borderRadius="xl" border="1px solid #e8edf5">
+            <Text fontSize="xs" color="#586580" fontWeight="bold" mb="2">RÉSUMÉ (méta description)</Text>
+            <Textarea
+              placeholder="Un résumé accrocheur en 1-2 phrases — affiché sur la liste et dans les résultats Google."
+              value={form.excerpt}
+              onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+              minH="80px"
+              border="none"
+              bg="transparent"
+              p="0"
+              resize="none"
+              _focus={{ outline: "none", boxShadow: "none" }}
+              fontSize="sm"
+            />
+          </Box>
+
+          <Box bg="white" p="5" borderRadius="xl" border="1px solid #e8edf5">
+            <Text fontSize="xs" color="#586580" fontWeight="bold" mb="2">CONTENU</Text>
+            <Text fontSize="2xs" color="#9aaabb" mb="3">
+              Utilisez ## pour les sous-titres, **texte** pour le gras, - pour les listes.
+            </Text>
+            <Textarea
+              placeholder="Rédigez votre article ici…"
+              value={form.content}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              minH="420px"
+              border="none"
+              bg="transparent"
+              p="0"
+              resize="vertical"
+              _focus={{ outline: "none", boxShadow: "none" }}
+              fontSize="sm"
+              lineHeight="1.75"
+              fontFamily="mono"
+            />
+          </Box>
+        </VStack>
+
+        {/* Colonne latérale */}
+        <VStack alignItems="stretch" gap="4">
+          {/* Image */}
+          <Box bg="white" p="5" borderRadius="xl" border="1px solid #e8edf5">
+            <Text fontSize="xs" color="#586580" fontWeight="bold" mb="3">IMAGE D'ILLUSTRATION</Text>
+            <Box
+              border="2px dashed"
+              borderColor={dragOver ? "#00bd59" : "#d1d9ef"}
+              borderRadius="xl"
+              bg={dragOver ? "#f0fdf4" : "#f8fafb"}
+              p="5"
+              textAlign="center"
+              cursor="pointer"
+              transition="all .15s"
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragOver(false);
+                const file = e.dataTransfer.files[0];
+                if (file) handleImageFile(file);
+              }}
+              onClick={() => (inputRef[0] as HTMLInputElement | null)?.click()}
+              position="relative"
+              overflow="hidden"
+            >
+              {imagePreview ? (
+                <Box>
+                  <Box
+                    as="img"
+                    src={imagePreview}
+                    alt="preview"
+                    style={{ width: "100%", maxHeight: "180px", objectFit: "cover", borderRadius: "10px" }}
+                  />
+                  <Text fontSize="2xs" color="#9aaabb" mt="2">
+                    Glissez une autre image pour remplacer
+                  </Text>
+                </Box>
+              ) : (
+                <Box py="4">
+                  <Text fontSize="2xl" mb="2">🖼️</Text>
+                  <Text fontSize="sm" fontWeight="bold" color="#4b587c">
+                    Glissez une image ici
+                  </Text>
+                  <Text fontSize="xs" color="#9aaabb" mt="1">
+                    ou cliquez pour sélectionner
+                  </Text>
+                  <Text fontSize="2xs" color="#c4ccd9" mt="2">
+                    JPG, PNG, WebP — max 5 Mo
+                  </Text>
+                </Box>
+              )}
+            </Box>
+            <Box
+              as="input"
+              type="file"
+              accept="image/*"
+              display="none"
+              ref={(el: HTMLInputElement | null) => { (inputRef as unknown as { 0: HTMLInputElement | null })[0] = el; }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0];
+                if (file) handleImageFile(file);
+              }}
+            />
+            {imageFile && (
+              <Box mt="3">
+                <Text fontSize="xs" color="#586580" fontWeight="bold" mb="1">Texte alternatif (SEO)</Text>
+                <Input
+                  placeholder="Description de l'image pour Google…"
+                  value={form.image_alt}
+                  onChange={(e) => setForm({ ...form, image_alt: e.target.value })}
+                  size="sm"
+                  bg="#f8fafb"
+                />
+              </Box>
+            )}
+          </Box>
+
+          {/* Sources */}
+          <Box bg="white" p="5" borderRadius="xl" border="1px solid #e8edf5">
+            <Text fontSize="xs" color="#586580" fontWeight="bold" mb="1">SOURCES</Text>
+            <Text fontSize="2xs" color="#9aaabb" mb="3">
+              Une par ligne : Nom de la source | https://…
+            </Text>
+            <Textarea
+              placeholder={"ADEME | https://ademe.fr/…\nSINSO | https://data.gouv.fr/…"}
+              value={form.sources}
+              onChange={(e) => setForm({ ...form, sources: e.target.value })}
+              minH="120px"
+              bg="#f8fafb"
+              fontSize="xs"
+              fontFamily="mono"
+            />
+          </Box>
+
+          {/* Slug preview */}
+          {form.title && (
+            <Box bg="#f0f3f9" p="4" borderRadius="xl">
+              <Text fontSize="2xs" color="#9aaabb" fontWeight="bold" mb="1">URL GÉNÉRÉE</Text>
+              <Text fontSize="xs" color="#4b587c" fontFamily="mono" wordBreak="break-all">
+                /blog/{slugify(form.title)}
+              </Text>
+            </Box>
+          )}
+        </VStack>
+      </Grid>
     </Box>
   );
 }
 
-// ── RowList ───────────────────────────────────────────────────────────────────
+// ── TestimonialManager ────────────────────────────────────────────────────────
+
+function TestimonialManager({
+  rows,
+  code,
+  onDone,
+  loading,
+}: {
+  rows: Row[];
+  code: string;
+  onDone: () => void;
+  loading: boolean;
+}) {
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ quote: "", name: "", role: "", company: "" });
+  const [busy, setBusy] = useState(false);
+
+  const save = async () => {
+    if (!form.quote.trim() || !form.name.trim()) return;
+    setBusy(true);
+    try {
+      await adminRequest(code, "testimonials", "POST", {
+        quote: form.quote,
+        name: form.name,
+        role: form.role,
+        company: form.company,
+        active: true,
+        sort_order: 0,
+      });
+      setForm({ quote: "", name: "", role: "", company: "" });
+      setShowAdd(false);
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const del = async (id: string) => {
+    if (!confirm("Supprimer cet avis ?")) return;
+    await adminRequest(code, "testimonials", "DELETE", { id });
+    onDone();
+  };
+
+  if (loading)
+    return <Flex py="20" justifyContent="center"><Text color="gray.400">Chargement…</Text></Flex>;
+
+  return (
+    <Box>
+      <Flex justify="flex-end" mb="4">
+        <Button
+          size="sm"
+          bg="#00bd59"
+          color="white"
+          fontWeight="bold"
+          _hover={{ bg: "#00a84f" }}
+          onClick={() => setShowAdd((v) => !v)}
+        >
+          {showAdd ? "Annuler" : "+ Ajouter un avis"}
+        </Button>
+      </Flex>
+
+      {showAdd && (
+        <Box bg="white" border="2px solid #00bd59" borderRadius="xl" p="5" mb="5">
+          <Text fontWeight="bold" color="#000d4d" mb="3" fontSize="sm">Nouvel avis client</Text>
+          <Grid gap="3">
+            <Box>
+              <Text fontSize="xs" color="#586580" mb="1" fontWeight="bold">Témoignage *</Text>
+              <Textarea
+                placeholder="Ce que le client a dit…"
+                value={form.quote}
+                onChange={(e) => setForm({ ...form, quote: e.target.value })}
+                minH="100px"
+                bg="#f8fafb"
+              />
+            </Box>
+            <Grid templateColumns="1fr 1fr" gap="3">
+              <Box>
+                <Text fontSize="xs" color="#586580" mb="1" fontWeight="bold">Prénom Nom *</Text>
+                <Input placeholder="Jean Dupont" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} bg="#f8fafb" />
+              </Box>
+              <Box>
+                <Text fontSize="xs" color="#586580" mb="1" fontWeight="bold">Fonction</Text>
+                <Input placeholder="Directeur commercial" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} bg="#f8fafb" />
+              </Box>
+            </Grid>
+            <Box>
+              <Text fontSize="xs" color="#586580" mb="1" fontWeight="bold">Entreprise</Text>
+              <Input placeholder="Nom de l'entreprise" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} bg="#f8fafb" />
+            </Box>
+          </Grid>
+          <HStack mt="3" gap="2">
+            <Button size="sm" bg="#00bd59" color="white" fontWeight="bold" _hover={{ bg: "#00a84f" }} onClick={save} disabled={busy || !form.quote.trim() || !form.name.trim()}>
+              {busy ? "Enregistrement…" : "Publier l'avis"}
+            </Button>
+            <Button size="sm" variant="ghost" color="#586580" onClick={() => setShowAdd(false)}>Annuler</Button>
+          </HStack>
+        </Box>
+      )}
+
+      {!rows.length && !showAdd && (
+        <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+          <Text color="#9aaabb" fontSize="sm" mb="3">Aucun avis client pour le moment.</Text>
+          <Button size="sm" bg="#00bd59" color="white" _hover={{ bg: "#00a84f" }} onClick={() => setShowAdd(true)}>+ Ajouter le premier avis</Button>
+        </Box>
+      )}
+
+      <VStack alignItems="stretch" gap="3">
+        {rows.map((row) => {
+          const initials = String(row.name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+          return (
+            <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" p="5">
+              <Flex gap="4" alignItems="flex-start">
+                <Box flexShrink={0}>
+                  <Box
+                    w="10"
+                    h="10"
+                    borderRadius="full"
+                    bg="#e8ecf6"
+                    color="#071FD6"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontWeight="bold"
+                    fontSize="sm"
+                  >
+                    {initials}
+                  </Box>
+                </Box>
+                <Box flex="1" minW="0">
+                  <Text
+                    fontSize="sm"
+                    color="#26345f"
+                    fontStyle="italic"
+                    lineHeight="1.65"
+                    mb="3"
+                  >
+                    "{String(row.quote || "")}"
+                  </Text>
+                  <Flex alignItems="center" gap="2" flexWrap="wrap">
+                    <Text fontSize="xs" fontWeight="bold" color="#000d4d">
+                      {String(row.name || "")}
+                    </Text>
+                    {row.role && (
+                      <Text fontSize="xs" color="#9aaabb">
+                        {String(row.role)}
+                      </Text>
+                    )}
+                    {row.company && (
+                      <Box
+                        px="2"
+                        py="0.5"
+                        bg="#f0f3f9"
+                        borderRadius="full"
+                        fontSize="2xs"
+                        color="#4b587c"
+                        fontWeight="medium"
+                      >
+                        {String(row.company)}
+                      </Box>
+                    )}
+                    <Box
+                      ml="auto"
+                      px="2"
+                      py="0.5"
+                      bg={row.active ? "#dcfce7" : "#fee2e2"}
+                      color={row.active ? "#15803d" : "#dc2626"}
+                      borderRadius="full"
+                      fontSize="2xs"
+                      fontWeight="bold"
+                    >
+                      {row.active ? "Actif" : "Masqué"}
+                    </Box>
+                  </Flex>
+                </Box>
+                <Button
+                  size="sm"
+                  bg="#fee2e2"
+                  color="#dc2626"
+                  border="1px solid #fecaca"
+                  fontWeight="semibold"
+                  flexShrink={0}
+                  _hover={{ bg: "#dc2626", color: "white" }}
+                  onClick={() => del(row.id)}
+                >
+                  Supprimer
+                </Button>
+              </Flex>
+            </Box>
+          );
+        })}
+      </VStack>
+    </Box>
+  );
+}
+
+// ── RowList (contacts, support, posts) ────────────────────────────────────────
+
+const PAGE_SIZE = 10;
 
 function RowList({
   rows,
@@ -1721,244 +2025,330 @@ function RowList({
   code,
   onDone,
   loading,
+  onNewPost,
 }: {
   rows: Row[];
   resource: string;
   code: string;
   onDone: () => void;
   loading: boolean;
+  onNewPost?: () => void;
 }) {
-  const editable = ["posts", "faq", "testimonials"].includes(resource);
-  const [faqPageFilter, setFaqPageFilter] = useState("all");
-  const faqPagePaths = useMemo(
-    () =>
-      [...new Set(rows.map((row) => String(row.page_path || "/")))].sort(
-        (a, b) => a.localeCompare(b, "fr"),
-      ),
-    [rows],
-  );
-  const displayedRows = useMemo(
-    () =>
-      resource === "faq" && faqPageFilter !== "all"
-        ? rows.filter(
-            (row) => String(row.page_path || "/") === faqPageFilter,
-          )
-        : rows,
-    [faqPageFilter, resource, rows],
-  );
-  const edit = async (row: Row) => {
-    const source =
-      resource === "posts"
-        ? {
-            title: row.title,
-            excerpt: row.excerpt,
-            content: row.content,
-            image_alt: row.image_alt,
-            sources: row.sources,
-            status: row.status,
-          }
-        : resource === "faq"
-          ? {
-              question: row.question,
-              answer: row.answer,
-              page_path: row.page_path,
-              active: row.active,
-            }
-          : {
-              quote: row.quote,
-              name: row.name,
-              role: row.role,
-              company: row.company,
-              rating: row.rating,
-              active: row.active,
-            };
+  const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [rows]);
+
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const deleteRow = async (id: string) => {
+    if (!confirm("Supprimer cet élément ?")) return;
+    await adminRequest(code, resource, "DELETE", { id });
+    onDone();
+  };
+
+  const editPost = async (row: Row) => {
     const next = prompt(
-      "Modifiez les informations au format JSON :",
-      JSON.stringify(source, null, 2),
+      "Modifiez les champs au format JSON :",
+      JSON.stringify({ title: row.title, excerpt: row.excerpt, status: row.status }, null, 2),
     );
     if (!next) return;
     try {
       const changes = JSON.parse(next);
-      if (resource === "posts" && changes.title)
-        changes.slug = slugify(changes.title);
+      if (changes.title) changes.slug = slugify(changes.title);
       await adminRequest(code, resource, "PATCH", { id: row.id, ...changes });
       onDone();
     } catch {
-      alert("JSON invalide : aucune modification enregistrée.");
+      alert("JSON invalide.");
     }
   };
-  if (loading) return <Text>Chargement…</Text>;
-  return (
-    <Grid gap="3">
-      {resource === "faq" && (
-        <Flex
-          bg="white"
-          border="1px solid #d8dee9"
-          borderRadius="xl"
-          p={{ base: "4", md: "5" }}
-          align={{ base: "stretch", md: "end" }}
-          direction={{ base: "column", md: "row" }}
-          justify="space-between"
-          gap="4"
-        >
-          <Box flex="1" maxW={{ md: "420px" }}>
-            <Text
-              as="label"
-              htmlFor="faq-page-filter"
-              display="block"
-              mb="2"
-              color="#000d4d"
-              fontWeight="bold"
-              fontSize="sm"
-            >
-              Filtrer les questions par page
-            </Text>
-            <NativeSelectRoot>
-              <NativeSelectField
-                id="faq-page-filter"
-                value={faqPageFilter}
-                onChange={(event) => setFaqPageFilter(event.target.value)}
-                bg="#eef1f6"
-                color="#111827"
-                borderColor="#c4ccd9"
-                _hover={{ borderColor: "#000d4d" }}
-                _focusVisible={{
-                  borderColor: "#00a84f",
-                  outline: "3px solid rgba(0, 189, 89, .2)",
-                }}
-              >
-                <option value="all">Toutes les pages</option>
-                {faqPagePaths.map((path) => (
-                  <option key={path} value={path}>
-                    {path === "/" ? "Accueil (/)" : path}
-                  </option>
-                ))}
-              </NativeSelectField>
-            </NativeSelectRoot>
-          </Box>
-          <Text color="#4b5563" fontSize="sm" fontWeight="semibold">
-            {displayedRows.length} question
-            {displayedRows.length > 1 ? "s" : ""} affichée
-            {displayedRows.length > 1 ? "s" : ""}
-          </Text>
-        </Flex>
-      )}
-      {displayedRows.map((row) => (
-        <Box
-          key={row.id}
-          bg="white"
-          p="4"
-          borderRadius="xl"
-          border="1px solid #edf0f6"
-        >
-          <Flex justify="space-between" gap="4">
-            <Box minW="0">
-              <Text fontWeight="bold" color="#000d4d">
-                {String(
-                  row.title ||
-                    row.question ||
-                    row.subject ||
-                    row.email ||
-                    row.name ||
-                    "Élément",
-                )}
-              </Text>
-              {resource === "faq" && (
-                <Text
-                  display="inline-block"
-                  mt="2"
-                  mb="1"
-                  px="2.5"
-                  py="1"
+
+  if (loading)
+    return (
+      <Flex py="20" justifyContent="center">
+        <Text color="gray.400">Chargement…</Text>
+      </Flex>
+    );
+
+  // ── Contacts ──────────────────────────────────────────────────────────────
+  if (resource === "contacts") {
+    return (
+      <VStack alignItems="stretch" gap="3">
+        {pageRows.map((row) => {
+          const fullName = [row.first_name, row.last_name].filter(Boolean).map(String).join(" ");
+          const initials = (fullName || String(row.email || "?")).slice(0, 2).toUpperCase();
+          return (
+            <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" overflow="hidden">
+              <Flex p="5" gap="4" alignItems="flex-start">
+                {/* Avatar */}
+                <Box
+                  w="11"
+                  h="11"
                   borderRadius="full"
-                  bg="#e6f8ee"
-                  color="#076b38"
-                  fontSize="xs"
+                  bg="#e8ecf6"
+                  color="#071FD6"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
                   fontWeight="bold"
+                  fontSize="sm"
+                  flexShrink={0}
                 >
-                  Page : {String(row.page_path || "/")}
-                </Text>
-              )}
-              {(resource === "contacts" || resource === "support") && (
-                <Text fontSize="sm" color="#26345f">
-                  {[
-                    row.first_name,
-                    row.last_name,
-                    row.company,
-                    row.activity,
-                    row.zone,
-                    row.phone,
-                  ]
-                    .filter(Boolean)
-                    .map(String)
-                    .join(" · ")}
-                </Text>
-              )}
-              <Text fontSize="sm" color="gray.600" whiteSpace="pre-wrap">
-                {String(
-                  row.message ||
-                    row.excerpt ||
-                    row.answer ||
-                    row.quote ||
-                    "",
-                )}
-              </Text>
-              <Text fontSize="xs" color="gray.400" mt="2">
-                {row.created_at
-                  ? new Date(String(row.created_at)).toLocaleString("fr-FR")
-                  : ""}
-              </Text>
+                  {initials}
+                </Box>
+                {/* Infos */}
+                <Box flex="1" minW="0">
+                  <Flex alignItems="flex-start" justifyContent="space-between" gap="3" flexWrap="wrap">
+                    <Box>
+                      <Text fontWeight="bold" color="#000d4d" fontSize="sm">
+                        {fullName || String(row.email || "Contact")}
+                      </Text>
+                      {row.company && (
+                        <Text fontSize="xs" color="#9aaabb">{String(row.company)}</Text>
+                      )}
+                    </Box>
+                    <Text fontSize="2xs" color="#9aaabb" flexShrink={0}>
+                      {row.created_at ? new Date(String(row.created_at)).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : ""}
+                    </Text>
+                  </Flex>
+                  {/* Badges */}
+                  <Flex gap="2" mt="2" flexWrap="wrap">
+                    {row.activity && (
+                      <Box px="2.5" py="1" bg="#e0e7ff" color="#3730a3" borderRadius="full" fontSize="2xs" fontWeight="bold">{String(row.activity)}</Box>
+                    )}
+                    {row.zone && (
+                      <Box px="2.5" py="1" bg="#f0f3f9" color="#4b587c" borderRadius="full" fontSize="2xs" fontWeight="medium">{String(row.zone)}</Box>
+                    )}
+                    {row.plan && (
+                      <Box px="2.5" py="1" bg="#fef3c7" color="#92400e" borderRadius="full" fontSize="2xs" fontWeight="bold">{String(row.plan)}</Box>
+                    )}
+                  </Flex>
+                  {/* Message */}
+                  {row.message && (
+                    <Box mt="3" p="3" bg="#f8fafb" borderRadius="lg" borderLeft="3px solid #e2e8f0">
+                      <Text fontSize="xs" color="#586580" lineHeight="1.6" noOfLines={3}>
+                        {String(row.message)}
+                      </Text>
+                    </Box>
+                  )}
+                  {/* Actions */}
+                  <HStack mt="3" gap="2">
+                    {row.email && (
+                      <Button asChild size="sm" bg="#071FD6" color="white" fontWeight="bold" borderRadius="lg" _hover={{ bg: "#0518a8" }}>
+                        <a href={`mailto:${String(row.email)}`}>✉ Répondre</a>
+                      </Button>
+                    )}
+                    {row.phone && (
+                      <Button asChild size="sm" {...lightButtonStyles} borderRadius="lg">
+                        <a href={`tel:${String(row.phone)}`}>📞 {String(row.phone)}</a>
+                      </Button>
+                    )}
+                  </HStack>
+                </Box>
+              </Flex>
             </Box>
-            <Flex gap="2" wrap="wrap" justify="flex-end">
-              {row.email ? (
-                <Button asChild size="sm" {...lightButtonStyles}>
-                  <a href={`mailto:${String(row.email)}`}>Répondre</a>
-                </Button>
-              ) : null}
-              {row.phone ? (
-                <Button asChild size="sm" {...lightButtonStyles}>
-                  <a href={`tel:${String(row.phone)}`}>Appeler</a>
-                </Button>
-              ) : null}
-              {editable && (
-                <Button
-                  size="sm"
-                  {...lightButtonStyles}
-                  onClick={() => edit(row)}
-                >
-                  Modifier
-                </Button>
+          );
+        })}
+        {!rows.length && (
+          <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+            <Text color="#9aaabb" fontSize="sm">Aucun contact pour le moment.</Text>
+          </Box>
+        )}
+        {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
+      </VStack>
+    );
+  }
+
+  // ── Support ───────────────────────────────────────────────────────────────
+  if (resource === "support") {
+    return (
+      <VStack alignItems="stretch" gap="3">
+        {pageRows.map((row) => (
+          <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" overflow="hidden">
+            <Box borderLeft="4px solid #f59e0b" pl="4" pr="5" py="4">
+              <Flex alignItems="flex-start" justifyContent="space-between" gap="3" flexWrap="wrap" mb="2">
+                <Box>
+                  <Flex gap="2" alignItems="center" mb="0.5">
+                    <Box px="2.5" py="0.5" bg="#fef3c7" color="#92400e" borderRadius="full" fontSize="2xs" fontWeight="bold">
+                      {String(row.subject || row.topic || "Demande")}
+                    </Box>
+                  </Flex>
+                  <Text fontSize="sm" fontWeight="bold" color="#000d4d">
+                    {String(row.email || row.name || "Utilisateur")}
+                  </Text>
+                  {row.company && <Text fontSize="xs" color="#9aaabb">{String(row.company)}</Text>}
+                </Box>
+                <Text fontSize="2xs" color="#9aaabb" flexShrink={0}>
+                  {row.created_at ? new Date(String(row.created_at)).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
+                </Text>
+              </Flex>
+              {row.message && (
+                <Box p="3" bg="#fefce8" borderRadius="lg" mb="3">
+                  <Text fontSize="sm" color="#78350f" lineHeight="1.65" noOfLines={4} whiteSpace="pre-wrap">
+                    {String(row.message)}
+                  </Text>
+                </Box>
               )}
-              {editable && (
-                <Button
-                  size="sm"
-                  colorPalette="red"
-                  _hover={{ bg: "red.600" }}
-                  _active={{ bg: "red.700" }}
-                  onClick={async () => {
-                    if (confirm("Supprimer cet élément ?")) {
-                      await adminRequest(code, resource, "DELETE", {
-                        id: row.id,
-                      });
-                      onDone();
-                    }
-                  }}
-                >
-                  Supprimer
-                </Button>
-              )}
-            </Flex>
-          </Flex>
-        </Box>
-      ))}
-      {!displayedRows.length && (
-        <Text color="gray.500">
-          {resource === "faq" && faqPageFilter !== "all"
-            ? "Aucune question pour cette page."
-            : "Aucune donnée pour le moment."}
+              <HStack gap="2">
+                {row.email && (
+                  <Button asChild size="sm" bg="#f59e0b" color="white" fontWeight="bold" borderRadius="lg" _hover={{ bg: "#d97706" }}>
+                    <a href={`mailto:${String(row.email)}`}>✉ Répondre</a>
+                  </Button>
+                )}
+                {row.phone && (
+                  <Button asChild size="sm" {...lightButtonStyles} borderRadius="lg">
+                    <a href={`tel:${String(row.phone)}`}>📞 {String(row.phone)}</a>
+                  </Button>
+                )}
+              </HStack>
+            </Box>
+          </Box>
+        ))}
+        {!rows.length && (
+          <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+            <Text color="#9aaabb" fontSize="sm">Aucune demande de support.</Text>
+          </Box>
+        )}
+        {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
+      </VStack>
+    );
+  }
+
+  // ── Blog posts ────────────────────────────────────────────────────────────
+  return (
+    <Box>
+      <Flex justify="space-between" align="center" mb="4">
+        <Text fontSize="sm" color="#9aaabb">
+          {rows.length} article{rows.length > 1 ? "s" : ""} · page {page}/{totalPages}
         </Text>
-      )}
-    </Grid>
+        {onNewPost && (
+          <Button
+            size="sm"
+            bg="#000d4d"
+            color="white"
+            fontWeight="bold"
+            borderRadius="lg"
+            _hover={{ bg: "#10226f" }}
+            onClick={onNewPost}
+          >
+            + Nouvel article
+          </Button>
+        )}
+      </Flex>
+      <VStack alignItems="stretch" gap="3">
+        {pageRows.map((row) => (
+          <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" overflow="hidden">
+            <Flex gap="0" alignItems="stretch">
+              {/* Thumbnail */}
+              {row.image_url && (
+                <Box
+                  w="110px"
+                  flexShrink={0}
+                  bg="#f0f3f9"
+                  overflow="hidden"
+                  display={{ base: "none", md: "block" }}
+                >
+                  <Box
+                    as="img"
+                    src={String(row.image_url)}
+                    alt={String(row.image_alt || "")}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </Box>
+              )}
+              <Box flex="1" p="4" minW="0">
+                <Flex alignItems="flex-start" justifyContent="space-between" gap="3" mb="1">
+                  <Text fontWeight="bold" color="#000d4d" fontSize="sm" noOfLines={2}>
+                    {String(row.title || "Sans titre")}
+                  </Text>
+                  <Flex gap="2" flexShrink={0} alignItems="center">
+                    <Box
+                      px="2"
+                      py="0.5"
+                      bg={row.status === "published" ? "#dcfce7" : "#fef3c7"}
+                      color={row.status === "published" ? "#15803d" : "#92400e"}
+                      borderRadius="full"
+                      fontSize="2xs"
+                      fontWeight="bold"
+                    >
+                      {row.status === "published" ? "Publié" : "Brouillon"}
+                    </Box>
+                    <Text fontSize="2xs" color="#9aaabb">
+                      {row.published_at ? new Date(String(row.published_at)).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }) : ""}
+                    </Text>
+                  </Flex>
+                </Flex>
+                {row.excerpt && (
+                  <Text fontSize="xs" color="#7b8ab0" noOfLines={2} lineHeight="1.5" mb="3">
+                    {String(row.excerpt)}
+                  </Text>
+                )}
+                <HStack gap="2">
+                  <Button size="sm" {...lightButtonStyles} borderRadius="lg" onClick={() => editPost(row)}>
+                    Modifier
+                  </Button>
+                  <Button
+                    size="sm"
+                    bg="#fee2e2"
+                    color="#dc2626"
+                    border="1px solid #fecaca"
+                    fontWeight="semibold"
+                    borderRadius="lg"
+                    _hover={{ bg: "#dc2626", color: "white" }}
+                    onClick={() => deleteRow(row.id)}
+                  >
+                    Supprimer
+                  </Button>
+                </HStack>
+              </Box>
+            </Flex>
+          </Box>
+        ))}
+        {!rows.length && (
+          <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+            <Text color="#9aaabb" fontSize="sm" mb="3">Aucun article publié.</Text>
+            {onNewPost && (
+              <Button size="sm" bg="#000d4d" color="white" _hover={{ bg: "#10226f" }} onClick={onNewPost}>
+                + Écrire le premier article
+              </Button>
+            )}
+          </Box>
+        )}
+        {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
+      </VStack>
+    </Box>
+  );
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+
+function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
+  return (
+    <Flex justifyContent="center" alignItems="center" gap="3" mt="4">
+      <Button
+        size="sm"
+        {...lightButtonStyles}
+        borderRadius="lg"
+        onClick={() => onChange(page - 1)}
+        disabled={page <= 1}
+        opacity={page <= 1 ? 0.4 : 1}
+      >
+        ← Précédent
+      </Button>
+      <Text fontSize="sm" color="#586580" fontWeight="medium">
+        Page {page} / {total}
+      </Text>
+      <Button
+        size="sm"
+        {...lightButtonStyles}
+        borderRadius="lg"
+        onClick={() => onChange(page + 1)}
+        disabled={page >= total}
+        opacity={page >= total ? 0.4 : 1}
+      >
+        Suivant →
+      </Button>
+    </Flex>
   );
 }
 
@@ -1972,7 +2362,8 @@ export function AdminPage() {
     [tab, setTab] = useState("dashboard"),
     [rows, setRows] = useState<Row[]>([]);
   const [error, setError] = useState(""),
-    [loading, setLoading] = useState(false);
+    [loading, setLoading] = useState(false),
+    [blogEditorOpen, setBlogEditorOpen] = useState(false);
 
   const load = async (resource = tab, auth = code) => {
     if (resource === "dashboard") return;
@@ -2007,7 +2398,7 @@ export function AdminPage() {
   };
 
   useEffect(() => {
-    if (logged && tab !== "dashboard") load(tab);
+    if (logged && tab !== "dashboard") { setBlogEditorOpen(false); load(tab); }
   }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!logged)
@@ -2184,15 +2575,16 @@ export function AdminPage() {
             <Text color="#00a84f" fontWeight="bold" fontSize="xs" letterSpacing="wide">
               BACK-OFFICE
             </Text>
-            <Text
-              fontSize={{ base: "xl", md: "2xl" }}
-              fontWeight="extrabold"
-              color="#000d4d"
-            >
-              {tabs.find((x) => x.id === tab)?.label}
+            <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="extrabold" color="#000d4d">
+              {blogEditorOpen ? "Nouvel article" : tabs.find((x) => x.id === tab)?.label}
             </Text>
+            {!blogEditorOpen && (
+              <Text fontSize="xs" color="#9aaabb" mt="0.5" maxW="480px">
+                {tabs.find((x) => x.id === tab)?.description}
+              </Text>
+            )}
           </Box>
-          {tab !== "dashboard" && (
+          {tab !== "dashboard" && !blogEditorOpen && (
             <Button
               onClick={() => load()}
               disabled={loading}
@@ -2223,25 +2615,34 @@ export function AdminPage() {
         ) : tab === "analytics" ? (
           <Analytics rows={rows} />
         ) : tab === "faq" ? (
-          <FaqManager
+          <FaqManager rows={rows} code={code} onDone={() => load()} loading={loading} />
+        ) : tab === "testimonials" ? (
+          <TestimonialManager rows={rows} code={code} onDone={() => load()} loading={loading} />
+        ) : tab === "posts" ? (
+          blogEditorOpen ? (
+            <BlogEditor
+              code={code}
+              onDone={() => { setBlogEditorOpen(false); load(); }}
+              onCancel={() => setBlogEditorOpen(false)}
+            />
+          ) : (
+            <RowList
+              rows={rows}
+              resource="posts"
+              code={code}
+              onDone={() => load()}
+              loading={loading}
+              onNewPost={() => setBlogEditorOpen(true)}
+            />
+          )
+        ) : (
+          <RowList
             rows={rows}
+            resource={tab}
             code={code}
             onDone={() => load()}
             loading={loading}
           />
-        ) : (
-          <>
-            {["posts", "testimonials"].includes(tab) && (
-              <Editor resource={tab} code={code} onDone={() => load()} />
-            )}
-            <RowList
-              rows={rows}
-              resource={tab}
-              code={code}
-              onDone={() => load()}
-              loading={loading}
-            />
-          </>
         )}
       </Box>
     </Flex>
