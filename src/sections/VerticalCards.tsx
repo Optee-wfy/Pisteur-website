@@ -134,6 +134,7 @@ export function VerticalCards() {
               POUR VOTRE MÉTIER
             </Text>
             <Text
+              as="h2"
               fontSize={{ base: "3xl", md: "5xl" }}
               fontWeight="800"
               letterSpacing="-.045em"
@@ -213,7 +214,7 @@ export function VerticalCards() {
                 </Box>
 
                 <Box>
-                  <Text fontSize="md" fontWeight="bold" color="#071B63" mb="0.5">
+                  <Text as="h3" fontSize="md" fontWeight="bold" color="#071B63" mb="0.5">
                     {v.title}
                   </Text>
                   <Text fontSize="xs" color="#7B86A3">

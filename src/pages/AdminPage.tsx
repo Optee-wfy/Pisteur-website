@@ -16,6 +16,7 @@ import {
   LuCalendar,
   LuEye,
   LuFileText,
+  LuGift,
   LuLayoutDashboard,
   LuMail,
   LuMessageSquare,
@@ -41,6 +42,7 @@ type Row = Record<string, unknown> & { id: string; created_at?: string };
 
 const tabs = [
   { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard, description: "Vue d'ensemble des métriques clés — trafic, leads entrants et activité récente du site." },
+  { id: "lead-popup", label: "Leads gratuits", icon: LuGift, description: "Demandes de leads gratuits reçues via le widget popup de la page d'accueil." },
   { id: "contacts", label: "Contacts", icon: LuMail, description: "Formulaires de contact reçus depuis le site — prospects à qualifier et relancer." },
   { id: "support", label: "Support", icon: LuMessageSquare, description: "Demandes d'assistance envoyées par les utilisateurs, à traiter en priorité." },
   { id: "posts", label: "Blog", icon: LuFileText, description: "Articles publiés sur le blog — créez, éditez et gérez votre contenu SEO." },
@@ -2070,6 +2072,63 @@ function RowList({
       </Flex>
     );
 
+  // ── Leads gratuits (popup) ────────────────────────────────────────────────
+  if (resource === "lead-popup") {
+    return (
+      <VStack alignItems="stretch" gap="3">
+        {!rows.length && (
+          <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+            <Text color="#9aaabb" fontSize="sm">Aucune demande de lead gratuit reçue pour l'instant.</Text>
+          </Box>
+        )}
+        {pageRows.map((row) => {
+          const name = String(row.first_name || row.firstName || "—");
+          const initials = name.slice(0, 2).toUpperCase();
+          return (
+            <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" overflow="hidden">
+              <Flex p="5" gap="4" alignItems="flex-start">
+                <Box
+                  w="11" h="11" borderRadius="full" bg="#ecfdf5" color="#059669"
+                  display="flex" alignItems="center" justifyContent="center"
+                  fontWeight="bold" fontSize="sm" flexShrink={0}
+                >
+                  {initials}
+                </Box>
+                <Box flex="1" minW="0">
+                  <Flex alignItems="flex-start" justifyContent="space-between" gap="3" flexWrap="wrap">
+                    <Box>
+                      <Text fontWeight="bold" color="#000d4d" fontSize="sm">{name}</Text>
+                      <Text fontSize="xs" color="#9aaabb">{String(row.email || "—")}</Text>
+                    </Box>
+                    <Text fontSize="2xs" color="#9aaabb" flexShrink={0}>
+                      {row.created_at ? new Date(String(row.created_at)).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : ""}
+                    </Text>
+                  </Flex>
+                  <Flex gap="2" mt="2.5" flexWrap="wrap">
+                    {row.sector && (
+                      <Box px="2.5" py="1" bg="#e0e7ff" color="#3730a3" borderRadius="full" fontSize="2xs" fontWeight="bold">{String(row.sector)}</Box>
+                    )}
+                    {row.buildingType && (
+                      <Box px="2.5" py="1" bg="#fef3c7" color="#92400e" borderRadius="full" fontSize="2xs" fontWeight="bold">{String(row.buildingType)}</Box>
+                    )}
+                    {row.zone && (
+                      <Box px="2.5" py="1" bg="#f0fdf4" color="#166534" borderRadius="full" fontSize="2xs" fontWeight="bold">📍 {String(row.zone)}</Box>
+                    )}
+                    {row.phone && (
+                      <Box px="2.5" py="1" bg="#f1f5f9" color="#475569" borderRadius="full" fontSize="2xs" fontWeight="bold">📞 {String(row.phone)}</Box>
+                    )}
+                    <Box px="2.5" py="1" bg="#ecfdf5" color="#059669" borderRadius="full" fontSize="2xs" fontWeight="bold">🎁 Lead gratuit</Box>
+                  </Flex>
+                </Box>
+              </Flex>
+            </Box>
+          );
+        })}
+        {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
+      </VStack>
+    );
+  }
+
   // ── Contacts ──────────────────────────────────────────────────────────────
   if (resource === "contacts") {
     return (
@@ -2370,8 +2429,15 @@ export function AdminPage() {
     setLoading(true);
     setError("");
     try {
-      const result = await adminRequest(auth, resource);
-      setRows(result.data || []);
+      // lead-popup est stocké dans contacts, filtré par kind côté front
+      const apiResource = resource === "lead-popup" ? "contacts" : resource;
+      const result = await adminRequest(auth, apiResource);
+      const data: Row[] = result.data || [];
+      setRows(
+        resource === "lead-popup"
+          ? data.filter((r) => String(r.kind || "") === "lead-popup")
+          : data
+      );
       setLogged(true);
       sessionStorage.setItem("pisteur_admin_code", auth);
     } catch (e) {

@@ -7,7 +7,6 @@ import { CommentCaMarchePage } from "@/pages/CommentCaMarchePage"
 import { DonneesPage } from "@/pages/DonneesPage"
 import { TarifsPage } from "@/pages/TarifsPage"
 import { CasUsagePage } from "@/pages/CasUsagePage"
-import { DemoPage } from "@/pages/DemoPage"
 import { BlogPage } from "@/pages/BlogPage"
 import { LegalPage } from "@/pages/LegalPage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
@@ -32,7 +31,6 @@ function App() {
             <Route path="/donnees" element={<DonneesPage />} />
             <Route path="/tarifs" element={<TarifsPage />} />
             <Route path="/cas-usage" element={<CasUsagePage />} />
-            <Route path="/demo" element={<DemoPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogArticlePage />} />
             <Route path="/support" element={<SupportPage />} />

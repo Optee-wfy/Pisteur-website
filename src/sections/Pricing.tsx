@@ -17,6 +17,7 @@ export function Pricing() {
       <Box maxW="7xl" mx="auto">
         <VStack gap="4" textAlign="center" mb={{ base: "10", md: "16" }}>
           <Text
+            as="h2"
             fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
             fontWeight="extrabold"
             color="#000d4d"
@@ -24,8 +25,16 @@ export function Pricing() {
             Simple, transparent, sans engagement
           </Text>
           <Text fontSize="md" color="gray.600" maxW="2xl">
-            Commencez gratuitement, scalez quand vous etes pret.
+            Commencez gratuitement, scalez quand vous êtes prêt.
           </Text>
+          <HStack gap="4" flexWrap="wrap" justifyContent="center" mt="1">
+            {["Sans carte bancaire requise", "Résiliation à tout moment", "Support inclus"].map((badge) => (
+              <HStack key={badge} gap="1.5" bg="#f0fdf4" px="3" py="1.5" borderRadius="full" border="1px solid #bbf7d0">
+                <Box color="#16a34a"><LuCheck size={12} /></Box>
+                <Text fontSize="xs" fontWeight="600" color="#166534">{badge}</Text>
+              </HStack>
+            ))}
+          </HStack>
         </VStack>
 
         <Flex

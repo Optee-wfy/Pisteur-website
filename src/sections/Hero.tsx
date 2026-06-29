@@ -31,14 +31,15 @@ import { DpeBadge } from "@/components/DpeBadge";
 const MotionBox = motion.create(Box);
 const AUTH_URL = "https://app.optee.io/auth";
 
-const audiences = [
-  { label: "Courtage en énergie", icon: LuZap },
-  { label: "Fournisseurs d’énergie", icon: LuFactory },
-  { label: "CVC & équipements", icon: LuFlame },
-  { label: "Rénovation énergétique", icon: LuWrench },
-  { label: "Solaire & ENR", icon: LuSun },
-  { label: "Bureaux d’études", icon: LuClipboardList },
-  { label: "Services immobiliers", icon: LuLandmark },
+const brands = [
+  { name: "Mon Courtier Énergie", domain: "moncourtierenergie.com" },
+  { name: "Place des Énergies", domain: "placedesenergies.com" },
+  { name: "UNIS", domain: "unis-immo.fr" },
+  { name: "FNAIM", domain: "fnaim.fr" },
+  { name: "Emera", domain: "emera.fr" },
+  { name: "Mieux Rénover", domain: "mieuxrenover.com" },
+  { name: "Calomatech", domain: "calomatech.fr" },
+  { name: "CBRE", domain: "cbre.fr" },
 ];
 
 function ProductPreview() {
@@ -313,7 +314,7 @@ export function Hero() {
               }}
               asChild
             >
-              <Link to="/demo">
+              <Link to="/contact">
                 Demander une démo <LuArrowRight />
               </Link>
             </Button>
@@ -365,37 +366,40 @@ export function Hero() {
         </Box>
       </Flex>
       <Box maxW="7xl" mx="auto" mt={{ base: "16", md: "24" }}>
-        <Text textAlign="center" fontSize="xs" color="gray.500" mb="7">
-          ADOPTÉ PAR LES ENTREPRISES QUI VENDENT AUX BÂTIMENTS
+        <Text textAlign="center" fontSize="xs" fontWeight="semibold" color="gray.400" letterSpacing="widest" mb="8">
+          ILS CIBLENT MIEUX. ILS DÉVELOPPENT LEUR ACTIVITÉ AVEC PISTEUR.
         </Text>
         <Flex
-          justifyContent="space-between"
-          gap={{ base: "5", md: "7" }}
+          justifyContent="center"
+          alignItems="center"
+          gap={{ base: "3", md: "4" }}
           flexWrap="wrap"
         >
-          {audiences.map(({ label, icon: Icon }) => (
-            <VStack
-              key={label}
-              color="#000d4d"
-              gap="2"
-              flex={{ base: "1 1 120px", lg: "1" }}
+          {brands.map((brand) => (
+            <HStack
+              key={brand.name}
+              px={{ base: "3", md: "4" }}
+              py="2.5"
+              bg="white"
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="xl"
+              boxShadow="0 4px 14px rgba(7,27,99,.05)"
+              transition="all .2s ease"
+              _hover={{ transform: "translateY(-2px)", borderColor: "#cbd5e1", boxShadow: "0 8px 20px rgba(7,27,99,.09)" }}
+              gap="2.5"
             >
-              <Box
-                w="10"
-                h="10"
-                borderRadius="xl"
-                bg="#f4f7ff"
-                color="#071FD6"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Icon size={20} />
-              </Box>
-              <Text textAlign="center" fontSize="xs" fontWeight="semibold">
-                {label}
+              <Image
+                src={`https://www.google.com/s2/favicons?domain_url=https://${brand.domain}&sz=128`}
+                alt={`Logo officiel ${brand.name}`}
+                w="7"
+                h="7"
+                objectFit="contain"
+              />
+              <Text fontSize="xs" fontWeight="600" color="#071B63" whiteSpace="nowrap">
+                {brand.name}
               </Text>
-            </VStack>
+            </HStack>
           ))}
         </Flex>
       </Box>

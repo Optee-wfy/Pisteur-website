@@ -15,7 +15,7 @@ export function Stats() {
   return (
     <Box py={{ base: "16", md: "20" }} px={{ base: "4", md: "6" }} bg="white">
       <Box maxW="7xl" mx="auto">
-        <Text textAlign="center" color="#23c55e" fontSize="sm" fontWeight="bold" mb="12">DES DONNÉES PUISSANTES. DES RÉSULTATS CONCRETS.</Text>
+        <Text as="h2" textAlign="center" color="#23c55e" fontSize="sm" fontWeight="bold" mb="12" letterSpacing="widest">DES DONNÉES PUISSANTES. DES RÉSULTATS CONCRETS.</Text>
         <Flex
           gap="0"
           flexWrap="wrap"

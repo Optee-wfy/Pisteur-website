@@ -16,9 +16,42 @@ import { SEO } from "@/components/SEO"
 import { FAQ } from "@/sections/FAQ"
 import { Testimonials } from "@/sections/Testimonials"
 import { PageHero } from "@/components/PageHero"
+import { PageCTA } from "@/sections/PageCTA"
+import { RelatedLinks } from "@/components/RelatedLinks"
 
 const AUTH_URL = "https://app.optee.io/auth"
 const MotionBox = motion.create(Box)
+
+const relatedVerticals: Record<string, { label: string; to: string; description: string }[]> = {
+  "courtage-energie": [
+    { label: "Fournisseurs d'énergie", to: "/fournisseurs-energie", description: "Identifiez les sites multi-sites et négociez en position de force." },
+    { label: "Rénovation énergétique", to: "/renovation-energetique", description: "Combinez CEE et MaPrimeRénov' pour un pitch décideur irrésistible." },
+  ],
+  "renovation-energetique": [
+    { label: "CVC & équipements", to: "/cvc-equipements", description: "Ciblez les bâtiments avec équipements vieillissants à remplacer." },
+    { label: "Solaire & ENR", to: "/solaire-enr", description: "Proposez panneaux et rénovation thermique dans la même visite." },
+  ],
+  "cvc-equipements": [
+    { label: "Rénovation énergétique", to: "/renovation-energetique", description: "Les mêmes bâtiments ont souvent besoin des deux — élargissez votre proposition." },
+    { label: "Bureaux d'études", to: "/bureaux-etudes", description: "Ciblez les appels d'offres HVAC avant qu'ils soient publiés." },
+  ],
+  "solaire-enr": [
+    { label: "Rénovation énergétique", to: "/renovation-energetique", description: "Complétez vos installations solaires avec de la rénovation thermique." },
+    { label: "Fournisseurs d'énergie", to: "/fournisseurs-energie", description: "Les producteurs ENR cherchent aussi à optimiser leur contrat." },
+  ],
+  "bureaux-etudes": [
+    { label: "CVC & équipements", to: "/cvc-equipements", description: "Identifiez les marchés avant le lancement des appels d'offres." },
+    { label: "Services immobiliers", to: "/services-immobiliers", description: "Les gestionnaires d'actifs font appel à vos expertises." },
+  ],
+  "services-immobiliers": [
+    { label: "Bureaux d'études", to: "/bureaux-etudes", description: "Détectez les bâtiments nécessitant audits et diagnostics réglementaires." },
+    { label: "Courtage en énergie", to: "/courtage-energie", description: "Proposez l'optimisation énergie à vos clients immobiliers." },
+  ],
+  "fournisseurs-energie": [
+    { label: "Courtage en énergie", to: "/courtage-energie", description: "Ciblez les mêmes bâtiments énergivores avec une approche complémentaire." },
+    { label: "Solaire & ENR", to: "/solaire-enr", description: "Les producteurs ENR cherchent aussi à optimiser leurs contrats fournisseurs." },
+  ],
+}
 
 type VerticalConfig = {
   slug: string
@@ -270,6 +303,20 @@ export function VerticalPage({ vertical }: { vertical: string }) {
         description={config.seoDescription}
         path={`/${config.slug}`}
         keywords={config.keywords}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: `Pisteur — ${config.eyebrow}`,
+          description: config.seoDescription,
+          provider: {
+            "@type": "Organization",
+            name: "Pisteur by CEELAB",
+            url: "https://pisteur.io",
+          },
+          areaServed: "FR",
+          serviceType: "Prospection commerciale B2B bâtiment",
+          url: `https://pisteur.io/${config.slug}`,
+        }}
       />
       <PageHero
         eyebrow={config.eyebrow}
@@ -291,6 +338,7 @@ export function VerticalPage({ vertical }: { vertical: string }) {
                 SIGNAUX DÉTECTÉS
               </Text>
               <Text
+                as="h2"
                 fontSize={{ base: "2xl", md: "3xl" }}
                 fontWeight="800"
                 color="#071B63"
@@ -347,7 +395,7 @@ export function VerticalPage({ vertical }: { vertical: string }) {
                   _hover={{ bg: "#f0f3ff" }}
                   asChild
                 >
-                  <Link to="/demo">Demander une démo</Link>
+                  <Link to="/contact">Demander une démo</Link>
                 </Button>
               </Flex>
             </MotionBox>
@@ -415,6 +463,7 @@ export function VerticalPage({ vertical }: { vertical: string }) {
               CAS D'USAGE
             </Text>
             <Text
+              as="h2"
               fontSize={{ base: "2xl", md: "4xl" }}
               fontWeight="800"
               color="#071B63"
@@ -467,6 +516,16 @@ export function VerticalPage({ vertical }: { vertical: string }) {
       </Box>
 
       <Testimonials />
+
+      <RelatedLinks
+        title="SOLUTIONS COMPLÉMENTAIRES"
+        links={[
+          ...(relatedVerticals[config.slug] ?? []),
+          { label: "Nos données", to: "/donnees", description: "Découvrez les 50+ sources officielles qui alimentent chaque prospect." },
+        ]}
+      />
+
+      <PageCTA title={`Trouvez vos prochains clients en ${config.eyebrow.toLowerCase()} dès maintenant.`} />
       <FAQ pagePath={`/${config.slug}`} />
     </>
   )

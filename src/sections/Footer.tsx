@@ -16,10 +16,13 @@ const footerGroups = [
   {
     title: "Solutions",
     links: [
-      ["Cas d’usage", "/cas-usage"],
-      ["Courtage en énergie", "/cas-usage"],
-      ["Rénovation énergétique", "/cas-usage"],
-      ["Services aux bâtiments", "/cas-usage"],
+      ["Courtage en énergie", "/courtage-energie"],
+      ["CVC & équipements", "/cvc-equipements"],
+      ["Rénovation énergétique", "/renovation-energetique"],
+      ["Solaire & ENR", "/solaire-enr"],
+      ["Bureaux d’études", "/bureaux-etudes"],
+      ["Services immobiliers", "/services-immobiliers"],
+      ["Fournisseurs d’énergie", "/fournisseurs-energie"],
     ],
   },
   {
@@ -27,7 +30,7 @@ const footerGroups = [
     links: [
       ["Blog", "/blog"],
       ["Questions fréquentes", "/tarifs#faq"],
-      ["Demander une démo", "/demo"],
+      ["Demander une démo", "/contact"],
       ["Support technique", "/support"],
       ["Se connecter", "https://app.optee.io/auth"],
     ],

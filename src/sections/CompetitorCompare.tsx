@@ -66,6 +66,7 @@ export function CompetitorCompare() {
               POURQUOI PISTEUR ?
             </Text>
             <Text
+              as="h2"
               fontSize={{ base: "3xl", md: "5xl" }}
               fontWeight="800"
               letterSpacing="-.045em"
@@ -182,7 +183,7 @@ export function CompetitorCompare() {
               >
                 <Box
                   as={Link}
-                  to="/demo"
+                  to="/contact"
                   display="flex"
                   alignItems="center"
                   gap="1.5"

@@ -17,7 +17,7 @@ import { submitContact } from "@/lib/backend";
 
 const GOOGLE_BUSINESS_URL = "https://share.google/TZfN2gdM3GjaIbIGm";
 
-export function ContactSection() {
+export function ContactSection({ hideHeader = false }: { hideHeader?: boolean }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -61,29 +61,31 @@ export function ContactSection() {
       bg="#f7f9fc"
     >
       <Box maxW="7xl" mx="auto">
-        <VStack textAlign="center" gap="3" mb={{ base: "9", md: "12" }}>
-          <Text
-            color="#00a84f"
-            fontSize="xs"
-            fontWeight="bold"
-            letterSpacing=".12em"
-          >
-            NOUS CONTACTER
-          </Text>
-          <Text
-            as="h2"
-            color="#000d4d"
-            fontSize={{ base: "3xl", md: "5xl" }}
-            fontWeight="extrabold"
-            letterSpacing="-.04em"
-          >
-            Parlons de vos prochaines opportunités.
-          </Text>
-          <Text color="gray.600" maxW="2xl" lineHeight="1.7">
-            Une question ou un projet ? Écrivez-nous. L’équipe Pisteur vous
-            répond dans les meilleurs délais.
-          </Text>
-        </VStack>
+        {!hideHeader && (
+          <VStack textAlign="center" gap="3" mb={{ base: "9", md: "12" }}>
+            <Text
+              color="#00a84f"
+              fontSize="xs"
+              fontWeight="bold"
+              letterSpacing=".12em"
+            >
+              NOUS CONTACTER
+            </Text>
+            <Text
+              as="h2"
+              color="#000d4d"
+              fontSize={{ base: "3xl", md: "5xl" }}
+              fontWeight="extrabold"
+              letterSpacing="-.04em"
+            >
+              Parlons de vos prochaines opportunités.
+            </Text>
+            <Text color="gray.600" maxW="2xl" lineHeight="1.7">
+              Une question ou un projet ? Écrivez-nous. L’équipe Pisteur vous
+              répond dans les meilleurs délais.
+            </Text>
+          </VStack>
+        )}
 
         <Grid
           templateColumns={{ base: "1fr", lg: "1.05fr .95fr" }}
@@ -118,7 +120,7 @@ export function ContactSection() {
               boxShadow="0 18px 50px rgba(0, 13, 77, .08)"
               p={{ base: "5", md: "7" }}
             >
-              <Text color="#000d4d" fontSize="xl" fontWeight="bold" mb="5">
+              <Text as="h2" color="#000d4d" fontSize="xl" fontWeight="bold" mb="5">
                 Envoyez-nous un message
               </Text>
               {submitted ? (

@@ -89,15 +89,6 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 export function MarketingStory() {
   return (
     <>
-      <Box py={{ base: "20", md: "28" }} px={{ base: "4", md: "6" }} bg="#F7FAFF">
-        <Box maxW="7xl" mx="auto">
-          <VStack textAlign="center" gap="3" mb="16"><Text color="#00b842" fontSize="sm" fontWeight="bold">EN 3 ÉTAPES</Text><Text fontSize={{ base: "3xl", md: "5xl" }} fontWeight="800" letterSpacing="-.045em" color="#071B63">Des prospects qualifiés.<br />Instantanément.</Text></VStack>
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: "12", md: "14" }}>
-            {steps.map(({ icon: Icon, n, title, text }, i) => <Reveal key={n} delay={i * .1}><VStack alignItems="flex-start" gap="5"><Flex w="full" alignItems="center" gap="4"><Box w="16" h="16" borderRadius="full" bg="white" border="1px solid #E5EAF5" color="#071B63" display="flex" alignItems="center" justifyContent="center"><Icon size={26} /></Box><Box h="1px" flex="1" bg="#D9E1F2" display={{ base: "none", md: i < 2 ? "block" : "none" }} /></Flex><HStack alignItems="flex-start" gap="3"><Box flexShrink="0" w="6" h="6" borderRadius="full" bg="#00c94c" color="white" display="flex" alignItems="center" justifyContent="center" fontSize="xs" fontWeight="bold">{n}</Box><Box><Text fontSize="md" fontWeight="bold" color="#071B63">{title}</Text><Text mt="3" fontSize="sm" color="#4B587C" lineHeight="1.7">{text}</Text></Box></HStack></VStack></Reveal>)}
-          </SimpleGrid>
-        </Box>
-      </Box>
-
       <Box py={{ base: "20", md: "28" }} px={{ base: "4", md: "6" }} bg="white">
         <Box maxW="7xl" mx="auto">
           <Grid
@@ -141,10 +132,19 @@ export function MarketingStory() {
           </SimpleGrid>
         </Box>
       </Box>
+
+      <Box py={{ base: "20", md: "28" }} px={{ base: "4", md: "6" }} bg="#F7FAFF">
+        <Box maxW="7xl" mx="auto">
+          <VStack textAlign="center" gap="3" mb="16"><Text color="#00b842" fontSize="sm" fontWeight="bold">EN 3 ÉTAPES</Text><Text fontSize={{ base: "3xl", md: "5xl" }} fontWeight="800" letterSpacing="-.045em" color="#071B63">Des prospects qualifiés.<br />Instantanément.</Text></VStack>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: "12", md: "14" }}>
+            {steps.map(({ icon: Icon, n, title, text }, i) => <Reveal key={n} delay={i * .1}><VStack alignItems="flex-start" gap="5"><Flex w="full" alignItems="center" gap="4"><Box w="16" h="16" borderRadius="full" bg="white" border="1px solid #E5EAF5" color="#071B63" display="flex" alignItems="center" justifyContent="center"><Icon size={26} /></Box><Box h="1px" flex="1" bg="#D9E1F2" display={{ base: "none", md: i < 2 ? "block" : "none" }} /></Flex><HStack alignItems="flex-start" gap="3"><Box flexShrink="0" w="6" h="6" borderRadius="full" bg="#00c94c" color="white" display="flex" alignItems="center" justifyContent="center" fontSize="xs" fontWeight="bold">{n}</Box><Box><Text fontSize="md" fontWeight="bold" color="#071B63">{title}</Text><Text mt="3" fontSize="sm" color="#4B587C" lineHeight="1.7">{text}</Text></Box></HStack></VStack></Reveal>)}
+          </SimpleGrid>
+        </Box>
+      </Box>
     </>
   )
 }
 
 export function FinalCTA() {
-  return <Box px={{ base: "4", md: "6" }} py={{ base: "16", md: "24" }} bg="white"><VStack maxW="7xl" mx="auto" bg="#071B63" color="white" borderRadius={{ base: "2xl", md: "3xl" }} px={{ base: "6", md: "16" }} py={{ base: "14", md: "20" }} textAlign="center" gap="6"><Box color="#00E653"><LuMousePointerClick size={38} /></Box><Text fontSize={{ base: "3xl", md: "5xl" }} fontWeight="800" letterSpacing="-.045em" lineHeight="1.05">Prêt à trouver vos<br />prochains clients ?</Text><Text fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.700" maxW="2xl">Courtage en énergie, rénovation, équipements ou services : décrivez votre activité et Pisteur transforme votre marché en prospects qualifiés.</Text><HStack gap="3" flexWrap="wrap" justifyContent="center"><Button size="lg" bg="#00c94c" color="white" borderRadius="lg" px="8" _hover={{ bg: "#00ad41", transform: "translateY(-2px)" }} asChild><a href={AUTH_URL}>Générer ma première liste <LuArrowRight /></a></Button><Button size="lg" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }} asChild><Link to="/demo">Demander une démo</Link></Button></HStack></VStack></Box>
+  return <Box px={{ base: "4", md: "6" }} py={{ base: "16", md: "24" }} bg="white"><VStack maxW="7xl" mx="auto" bg="#071B63" color="white" borderRadius={{ base: "2xl", md: "3xl" }} px={{ base: "6", md: "16" }} py={{ base: "14", md: "20" }} textAlign="center" gap="6"><Box color="#00E653"><LuMousePointerClick size={38} /></Box><Text fontSize={{ base: "3xl", md: "5xl" }} fontWeight="800" letterSpacing="-.045em" lineHeight="1.05">Prêt à trouver vos<br />prochains clients ?</Text><Text fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.700" maxW="2xl">Courtage en énergie, rénovation, équipements ou services : décrivez votre activité et Pisteur transforme votre marché en prospects qualifiés.</Text><HStack gap="3" flexWrap="wrap" justifyContent="center"><Button size="lg" bg="#00c94c" color="white" borderRadius="lg" px="8" _hover={{ bg: "#00ad41", transform: "translateY(-2px)" }} asChild><a href={AUTH_URL}>Générer ma première liste <LuArrowRight /></a></Button><Button size="lg" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }} asChild><Link to="/contact">Demander une démo</Link></Button></HStack></VStack></Box>
 }

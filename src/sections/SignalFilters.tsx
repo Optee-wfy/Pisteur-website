@@ -1,9 +1,11 @@
 import { Badge, Box, Flex, HStack, Text, VStack } from "@chakra-ui/react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { LuCheck } from "react-icons/lu"
 import { filterGroups, leads } from "@/data/content"
 import { DpeBadge } from "@/components/DpeBadge"
 
 const MotionBox = motion.create(Box)
+const MotionFlex = motion.create(Flex)
 
 export function SignalFilters() {
   return (
@@ -15,11 +17,12 @@ export function SignalFilters() {
       <Box maxW="7xl" mx="auto">
         <VStack gap="4" textAlign="center" mb={{ base: "10", md: "16" }}>
           <Text
+            as="h2"
             fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
             fontWeight="extrabold"
             color="white"
           >
-            Ciblez au millimetre. 100+ signaux batiment.
+            Ciblez au millimètre. Plus de 50 signaux par bâtiment.
           </Text>
           <Text fontSize="md" color="white/70" maxW="2xl">
             Chaque filtre affine votre ciblage. Plus vous etes precis, plus
@@ -158,15 +161,28 @@ export function SignalFilters() {
                           {lead.manager}
                         </Text>
                       </Box>
-                      <Badge
-                        bg={lead.match >= 80 ? "#23c55e" : "#23c55e/60"}
-                        color="white"
-                        borderRadius="md"
-                        fontSize="2xs"
+                      <MotionFlex
+                        alignItems="center"
+                        gap="1"
                         px="2"
+                        py="0.5"
+                        borderRadius="md"
+                        bg="#23c55e"
+                        color="white"
+                        fontSize="2xs"
+                        fontWeight="bold"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.4, delay: 0.3 * i }}
                       >
-                        {lead.match}%
-                      </Badge>
+                        <MotionBox
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                        >
+                          <LuCheck size={10} />
+                        </MotionBox>
+                        Lead qualifié
+                      </MotionFlex>
                     </Flex>
                     <HStack gap="2" mt="2">
                       <DpeBadge grade={lead.dpe} compact />

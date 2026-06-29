@@ -1,27 +1,148 @@
+import { useEffect, useState } from "react"
 import { Box, Flex, Grid, HStack, Image, Text, VStack } from "@chakra-ui/react"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import {
   LuBuilding2,
   LuCheck,
   LuDatabase,
   LuExternalLink,
-  LuFileDigit,
   LuFileText,
-  LuFlame,
-  LuHash,
-  LuHouse,
-  LuLandmark,
   LuLink,
+  LuMail,
   LuMapPin,
+  LuPhone,
   LuRefreshCw,
+  LuSearch,
   LuSend,
   LuShieldCheck,
+  LuSparkles,
+  LuTrendingUp,
   LuUsers,
-  LuZap,
 } from "react-icons/lu"
-import type { IconType } from "react-icons"
 
 const MotionBox = motion.create(Box)
+
+const aiPhases = ["logo", "search", "success"] as const
+
+function PisteurAiLogo() {
+  const [phaseIndex, setPhaseIndex] = useState(0)
+  const phase = aiPhases[phaseIndex]
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setPhaseIndex((current) => (current + 1) % aiPhases.length),
+      phase === "search" ? 2200 : phase === "success" ? 1500 : 2600,
+    )
+    return () => window.clearTimeout(timer)
+  }, [phase])
+
+  return (
+    <MotionBox
+      w={{ base: "88px", md: "110px", xl: "132px" }}
+      h={{ base: "88px", md: "110px", xl: "132px" }}
+      borderRadius="full"
+      position="relative"
+      p="3px"
+      animate={{ scale: phase === "success" ? [1, 1.08, 1] : [1, 1.02, 1] }}
+      transition={{ duration: phase === "success" ? 0.55 : 2.4, ease: "easeInOut" }}
+    >
+      <MotionBox
+        position="absolute"
+        inset="0"
+        borderRadius="full"
+        bg="conic-gradient(from 0deg, #071FD6, #6945ff, #00d978, #50f2b0, #071FD6)"
+        animate={{ rotate: 360 }}
+        transition={{ duration: phase === "search" ? 1.25 : 3.5, repeat: Infinity, ease: "linear" }}
+        boxShadow={phase === "success"
+          ? "0 0 34px rgba(0,217,120,.42)"
+          : "0 0 28px rgba(61,72,255,.26)"}
+      />
+      <Box
+        position="relative"
+        w="full"
+        h="full"
+        borderRadius="full"
+        bg="white"
+        border="1px solid rgba(7,31,214,.06)"
+        boxShadow="0 18px 48px rgba(7,31,214,.13), 0 4px 16px rgba(0,0,0,.05)"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        overflow="hidden"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {phase === "logo" && (
+            <MotionBox
+              key="logo"
+              position="absolute"
+              inset="0"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              initial={{ opacity: 0, scale: 0.72, filter: "blur(6px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.82, filter: "blur(4px)" }}
+              transition={{ duration: 0.45 }}
+            >
+              <Image src="/logo-pisteur-ai.webp" alt="Logo Pisteur" w="58%" h="58%" objectFit="contain" />
+            </MotionBox>
+          )}
+
+          {phase === "search" && (
+            <MotionBox
+              key="search"
+              position="absolute"
+              inset="0"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap="1"
+              color="#071FD6"
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <MotionBox
+                animate={{ x: [-5, 5, -5], y: [-2, 2, -2], rotate: [-8, 8, -8] }}
+                transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <LuSearch size={30} strokeWidth={2.2} />
+              </MotionBox>
+              <Text fontSize={{ base: "7px", md: "8px" }} fontWeight="800" letterSpacing=".08em">
+                RECHERCHE IA
+              </Text>
+            </MotionBox>
+          )}
+
+          {phase === "success" && (
+            <MotionBox
+              key="success"
+              position="absolute"
+              inset="0"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap="1"
+              color="#00B864"
+              initial={{ opacity: 0, scale: 0.45, rotate: -18 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 1.2 }}
+              transition={{ type: "spring", stiffness: 260, damping: 17 }}
+            >
+              <LuCheck size={36} strokeWidth={3} />
+              <Text fontSize={{ base: "7px", md: "8px" }} fontWeight="900" letterSpacing=".06em">
+                LEAD VALIDÉ
+              </Text>
+            </MotionBox>
+          )}
+        </AnimatePresence>
+      </Box>
+    </MotionBox>
+  )
+}
 
 const sourceGroups = [
   {
@@ -63,263 +184,190 @@ const sourceGroups = [
   },
 ]
 
-// Icônes représentant les types de données qui "volent" vers le logo
-const flowIcons: { icon: IconType; color: string; bg: string }[] = [
-  { icon: LuBuilding2, color: "#071FD6", bg: "#eef0fd" },
-  { icon: LuHash,      color: "#7c3aed", bg: "#f5f3ff" },
-  { icon: LuFileText,  color: "#059669", bg: "#ecfdf5" },
-  { icon: LuHouse,     color: "#071FD6", bg: "#eef0fd" },
-  { icon: LuZap,       color: "#d97706", bg: "#fffbeb" },
-  { icon: LuFileDigit, color: "#0ea5e9", bg: "#f0f9ff" },
-  { icon: LuMapPin,    color: "#7c3aed", bg: "#f5f3ff" },
-  { icon: LuLandmark,  color: "#059669", bg: "#ecfdf5" },
-  { icon: LuDatabase,  color: "#071FD6", bg: "#eef0fd" },
-  { icon: LuFlame,     color: "#ef4444", bg: "#fef2f2" },
-  { icon: LuUsers,     color: "#059669", bg: "#ecfdf5" },
-  { icon: LuFileText,  color: "#0ea5e9", bg: "#f0f9ff" },
-]
-
-// 12 flux de particules répartis verticalement
-const FLOW_LANES = [
-  { yPct: 4,  delay: 0.0  },
-  { yPct: 13, delay: 1.2  },
-  { yPct: 22, delay: 0.4  },
-  { yPct: 31, delay: 1.8  },
-  { yPct: 40, delay: 0.8  },
-  { yPct: 50, delay: 0.0  },
-  { yPct: 59, delay: 1.4  },
-  { yPct: 68, delay: 0.6  },
-  { yPct: 77, delay: 1.0  },
-  { yPct: 86, delay: 0.2  },
-  { yPct: 94, delay: 1.6  },
-]
-
-function Particle({ lane, iconDef, wave }: {
-  lane: typeof FLOW_LANES[0]
-  iconDef: typeof flowIcons[0]
-  wave: number
-}) {
-  const Icon = iconDef.icon
-  const dur = 2.8 + wave * 0.35
-
-  return (
-    <MotionBox
-      position="absolute"
-      top={`${lane.yPct}%`}
-      left="-40px"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      w="36px"
-      h="36px"
-      borderRadius="10px"
-      bg={iconDef.bg}
-      border={`1.5px solid ${iconDef.color}28`}
-      boxShadow={`0 4px 12px ${iconDef.color}18`}
-      color={iconDef.color}
-      animate={{
-        x: [0, 120, 240, 360, 480],
-        opacity: [0, 1, 1, 0.6, 0],
-        scale: [0.75, 1, 1, 0.85, 0.5],
-      }}
-      transition={{
-        duration: dur,
-        delay: lane.delay + wave * 1.1,
-        repeat: Infinity,
-        ease: "easeInOut",
-        repeatDelay: 0.6,
-      }}
-    >
-      <Icon size={15} />
-    </MotionBox>
-  )
-}
-
-// Petite particule "dot" pour remplir entre les icônes
-function Dot({ yPct, delay, color }: { yPct: number; delay: number; color: string }) {
-  const size = 5 + Math.round((yPct % 3) * 2.5)
-  return (
-    <MotionBox
-      position="absolute"
-      top={`${yPct}%`}
-      left="-8px"
-      w={`${size}px`}
-      h={`${size}px`}
-      borderRadius="full"
-      bg={color}
-      opacity={0.7}
-      animate={{
-        x: [0, 180, 380, 520],
-        opacity: [0, 0.8, 0.5, 0],
-      }}
-      transition={{
-        duration: 3.4 + (yPct % 4) * 0.3,
-        delay,
-        repeat: Infinity,
-        ease: "easeIn",
-        repeatDelay: 1.0,
-      }}
-    />
-  )
-}
-
 function DataFlowVisual() {
   return (
     <Box
       position="relative"
-      h={{ base: "340px", md: "460px" }}
+      h={{ base: "300px", md: "440px", xl: "560px" }}
       w="full"
+      minW="0"
       overflow="hidden"
-      bg="linear-gradient(135deg, #f8faff 0%, #eef2fb 50%, #f0fdf8 100%)"
-      borderRadius="2xl"
-      border="1px solid #e4e9f5"
+      isolation="isolate"
     >
-      {/* Grille déco très discrète */}
       <Box
         position="absolute"
-        inset="0"
-        style={{
-          backgroundImage: "radial-gradient(circle, rgba(7,31,214,0.05) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-        pointerEvents="none"
-      />
-
-      {/* Icônes animées — 2 vagues */}
-      {FLOW_LANES.map((lane, li) => (
-        <Particle key={`a-${li}`} lane={lane} iconDef={flowIcons[li % flowIcons.length]} wave={0} />
-      ))}
-      {FLOW_LANES.map((lane, li) => (
-        <Particle
-          key={`b-${li}`}
-          lane={{ yPct: lane.yPct + 4.5, delay: lane.delay + 0.6 }}
-          iconDef={flowIcons[(li + 5) % flowIcons.length]}
-          wave={1}
-        />
-      ))}
-
-      {/* Dots supplémentaires */}
-      {[
-        { yPct: 8,  delay: 0.5,  color: "#23c55e" },
-        { yPct: 26, delay: 1.3,  color: "#071FD6" },
-        { yPct: 45, delay: 0.1,  color: "#23c55e" },
-        { yPct: 63, delay: 1.7,  color: "#7c3aed" },
-        { yPct: 80, delay: 0.8,  color: "#071FD6" },
-        { yPct: 18, delay: 2.1,  color: "#059669" },
-        { yPct: 55, delay: 0.3,  color: "#23c55e" },
-        { yPct: 72, delay: 1.5,  color: "#071FD6" },
-        { yPct: 90, delay: 0.9,  color: "#7c3aed" },
-      ].map((d, i) => (
-        <Dot key={i} {...d} />
-      ))}
-
-      {/* Logo Pisteur — cercle central */}
-      <MotionBox
-        position="absolute"
-        right={{ base: "8%", md: "12%" }}
-        top="50%"
-        transform="translateY(-50%)"
-        zIndex={3}
-        animate={{ scale: [1, 1.03, 1] }}
-        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+        top="0"
+        left="67%"
+        h="full"
+        aspectRatio="1.536 / 1"
+        transform="translateX(-67%)"
       >
-        {/* Halos concentriques */}
-        {[80, 56, 32].map((offset, i) => (
-          <MotionBox
-            key={i}
-            position="absolute"
-            inset={`-${offset}px`}
-            borderRadius="full"
-            border={`1px solid rgba(${i === 0 ? "35,197,94" : "7,31,214"},.${i === 0 ? "12" : "08"})`}
-            animate={{ opacity: [0.2, 0.6, 0.2], scale: [0.97, 1.03, 0.97] }}
-            transition={{ duration: 2.6 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-            pointerEvents="none"
-          />
-        ))}
+        <Image
+          src="/pisteur-data-flow.png"
+          alt="Flux des données françaises vers la base Pisteur"
+          position="absolute"
+          inset="0"
+          w="full"
+          h="full"
+          objectFit="fill"
+          pointerEvents="none"
+        />
 
-        {/* Cercle principal avec logo */}
+        {/* Logo ancré au centre exact du cercle de l'illustration */}
         <Box
-          w={{ base: "100px", md: "128px" }}
-          h={{ base: "100px", md: "128px" }}
-          borderRadius="full"
-          bg="white"
-          border="2px solid rgba(7,31,214,.12)"
-          boxShadow="0 24px 64px rgba(7,31,214,.2), 0 6px 20px rgba(0,0,0,.08)"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          position="relative"
-          zIndex={1}
-          overflow="hidden"
+          position="absolute"
+          left="73.3%"
+          top="50%"
+          transform="translate(-50%, -50%)"
+          zIndex={3}
         >
-          {/* Anneau conic-gradient identique au screenshot */}
-          <Box
-            position="absolute"
-            inset="0"
-            borderRadius="full"
-            style={{
-              background: "conic-gradient(from 0deg, #071FD6, #23c55e, #071B63, #7c3aed, #071FD6)",
-              opacity: 0.15,
-            }}
-          />
-          <Box
-            position="absolute"
-            inset="3px"
-            borderRadius="full"
-            bg="white"
-          />
-          <Image
-            src="/logo-pisteur-ai.webp"
-            alt="Logo Pisteur"
-            w="54%"
-            h="54%"
-            objectFit="contain"
-            position="relative"
-            zIndex={1}
-          />
-          {/* Point vert en bas à droite */}
-          <Box
-            position="absolute"
-            bottom="10px"
-            right="10px"
-            w="12px"
-            h="12px"
-            borderRadius="full"
-            bg="#23c55e"
-            border="2px solid white"
-            zIndex={2}
-          />
+          <PisteurAiLogo />
+        </Box>
+      </Box>
+    </Box>
+  )
+}
+
+const leadSteps = [
+  { label: "Détection", detail: "Signal bâtiment identifié" },
+  { label: "Enrichissement", detail: "Entreprise et décideur trouvés" },
+  { label: "Lead qualifié", detail: "Score commercial calculé" },
+]
+
+function AutomaticLeadCard() {
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setStep((current) => (current + 1) % leadSteps.length), step === 2 ? 3600 : 1800)
+    return () => window.clearTimeout(timer)
+  }, [step])
+
+  return (
+    <MotionBox
+      initial={{ opacity: 0, x: 24 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.65 }}
+      bg="#071B63"
+      borderRadius="2xl"
+      p="1px"
+      boxShadow="0 24px 70px rgba(7,27,99,.2)"
+      overflow="hidden"
+      w="full"
+      maxW={{ base: "full", xl: "330px" }}
+      justifySelf="end"
+    >
+      <Box bg="#F8FAFF" borderRadius="calc(1rem - 1px)" overflow="hidden">
+        <Flex px="4" py="3.5" bg="white" borderBottom="1px solid #E7ECF6" alignItems="center" justifyContent="space-between">
+          <HStack gap="2.5">
+            <Box w="8" h="8" borderRadius="lg" bg="#071FD6" display="flex" alignItems="center" justifyContent="center">
+              <Image src="/logo-pisteur-ai.webp" alt="Pisteur" w="5" h="5" objectFit="contain" filter="brightness(0) invert(1)" />
+            </Box>
+            <Box>
+              <Text fontSize="xs" fontWeight="900" color="#071B63">Générateur de leads</Text>
+              <Text fontSize="9px" color="#7A86A3">Propulsé par l’IA Pisteur</Text>
+            </Box>
+          </HStack>
+          <HStack gap="1" bg="#EAFBF0" color="#009B58" px="2" py="1" borderRadius="full">
+            <MotionBox w="5px" h="5px" bg="#00C96B" borderRadius="full" animate={{ opacity: [1, .25, 1] }} transition={{ duration: 1.4, repeat: Infinity }} />
+            <Text fontSize="8px" fontWeight="900">LIVE</Text>
+          </HStack>
+        </Flex>
+
+        <Box px="4" pt="4" pb="3">
+          <HStack gap="1.5" mb="3">
+            {leadSteps.map((item, index) => (
+              <Box key={item.label} flex="1">
+                <MotionBox
+                  h="3px"
+                  borderRadius="full"
+                  bg={index <= step ? (step === 2 ? "#00C96B" : "#3047FF") : "#DCE3F0"}
+                  initial={false}
+                  animate={{ opacity: index <= step ? 1 : .55 }}
+                />
+              </Box>
+            ))}
+          </HStack>
+          <HStack gap="2" color={step === 2 ? "#009B58" : "#071FD6"}>
+            <MotionBox animate={{ rotate: step < 2 ? 360 : 0 }} transition={{ duration: 1.4, repeat: step < 2 ? Infinity : 0, ease: "linear" }}>
+              {step === 2 ? <LuCheck size={14} strokeWidth={3} /> : <LuSparkles size={14} />}
+            </MotionBox>
+            <Box>
+              <Text fontSize="10px" fontWeight="900">{leadSteps[step].label}</Text>
+              <Text fontSize="9px" color="#7A86A3">{leadSteps[step].detail}</Text>
+            </Box>
+          </HStack>
         </Box>
 
-        {/* Badge sous le cercle */}
-        <Box textAlign="center" mt="3">
-          <Box
-            display="inline-flex"
-            alignItems="center"
-            gap="1.5"
-            bg="rgba(7,27,99,.9)"
-            color="white"
-            borderRadius="full"
-            px="3"
-            py="1"
-            backdropFilter="blur(8px)"
+        <AnimatePresence mode="wait">
+          <MotionBox
+            key={step}
+            mx="3"
+            mb="3"
+            bg="white"
+            border="1px solid #E4E9F3"
+            borderRadius="xl"
+            overflow="hidden"
+            initial={{ opacity: 0, y: 12, filter: "blur(5px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+            transition={{ duration: .38 }}
           >
-            <MotionBox
-              w="5px"
-              h="5px"
-              borderRadius="full"
-              bg="#23c55e"
-              flexShrink={0}
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.4, repeat: Infinity }}
-            />
-            <Text fontSize="9px" fontWeight="700" letterSpacing="wide">
-              IA Pisteur · Live
-            </Text>
-          </Box>
-        </Box>
-      </MotionBox>
-    </Box>
+            <Flex p="3.5" alignItems="flex-start" justifyContent="space-between" borderBottom="1px solid #EEF1F7">
+              <HStack gap="3" alignItems="flex-start">
+                <Box w="10" h="10" borderRadius="xl" bg="#EEF1FF" color="#071FD6" display="flex" alignItems="center" justifyContent="center" flexShrink={0}>
+                  <LuBuilding2 size={19} />
+                </Box>
+                <Box>
+                  <Text fontSize="xs" fontWeight="900" color="#071B63">Résidence Les Jardins</Text>
+                  <Text fontSize="9px" color="#7A86A3">Copropriété · Lyon 6e</Text>
+                  <HStack mt="1.5" gap="1" color="#596785"><LuMapPin size={9} /><Text fontSize="8px">24 rue Duquesne, 69006</Text></HStack>
+                </Box>
+              </HStack>
+              <Box textAlign="center" bg="#EAFBF0" borderRadius="lg" px="2.5" py="1.5">
+                <Text fontSize="lg" lineHeight="1" fontWeight="900" color="#009B58">94</Text>
+                <Text fontSize="7px" fontWeight="800" color="#009B58">SCORE</Text>
+              </Box>
+            </Flex>
+
+            <Grid templateColumns="repeat(3, 1fr)" gap="1" p="3">
+              {[
+                ["2 480 m²", "Surface"], ["D", "DPE"], ["1974", "Construction"],
+              ].map(([value, label]) => (
+                <Box key={label} bg="#F7F9FD" borderRadius="lg" py="2" textAlign="center">
+                  <Text fontSize="10px" fontWeight="900" color="#071B63">{value}</Text>
+                  <Text fontSize="7px" color="#8A94AC">{label}</Text>
+                </Box>
+              ))}
+            </Grid>
+
+            <Box px="3" pb="3">
+              <Text fontSize="8px" fontWeight="900" color="#7A86A3" mb="2" letterSpacing=".08em">SIGNAL DÉTECTÉ</Text>
+              <HStack bg="#FFF8E8" color="#9A6500" border="1px solid #F7E3AD" borderRadius="lg" px="2.5" py="2" gap="2">
+                <LuTrendingUp size={13} />
+                <Text fontSize="9px" fontWeight="700">Rénovation énergétique prioritaire</Text>
+              </HStack>
+            </Box>
+
+            <Box px="3" pb="3">
+              <Text fontSize="8px" fontWeight="900" color="#7A86A3" mb="2" letterSpacing=".08em">DÉCIDEUR ENRICHI</Text>
+              <HStack bg="#F3F5FF" borderRadius="lg" px="2.5" py="2.5" justifyContent="space-between">
+                <Box>
+                  <Text fontSize="10px" fontWeight="900" color="#071B63">Sophie Martin</Text>
+                  <Text fontSize="8px" color="#7A86A3">Présidente du conseil syndical</Text>
+                </Box>
+                <HStack gap="1.5">
+                  <Box w="6" h="6" borderRadius="md" bg="white" color="#071FD6" display="flex" alignItems="center" justifyContent="center"><LuMail size={11} /></Box>
+                  <Box w="6" h="6" borderRadius="md" bg="#071FD6" color="white" display="flex" alignItems="center" justifyContent="center"><LuPhone size={11} /></Box>
+                </HStack>
+              </HStack>
+            </Box>
+          </MotionBox>
+        </AnimatePresence>
+
+        <HStack px="4" pb="4" color="#009B58" gap="1.5"><LuShieldCheck size={11} /><Text fontSize="8px" fontWeight="700">Données vérifiées · Contact conforme RGPD</Text></HStack>
+      </Box>
+    </MotionBox>
   )
 }
 
@@ -337,7 +385,8 @@ function McpChatCard() {
       borderRadius="2xl"
       overflow="hidden"
       boxShadow="0 20px 60px rgba(7,27,99,.1), 0 4px 16px rgba(0,0,0,.05)"
-      w={{ base: "full", xl: "300px" }}
+      w="full"
+      maxW="380px"
       flexShrink={0}
     >
       {/* ── Zone supérieure : badge + titre + logos ── */}
@@ -568,7 +617,7 @@ function SourceList() {
 
       {/* Liste des sources */}
       <VStack gap="5" alignItems="stretch">
-        {sourceGroups.map((group, gi) => {
+        {sourceGroups.map((group) => {
           const GIcon = group.icon
           return (
             <Box key={group.title}>
@@ -657,8 +706,76 @@ export function DataInfra() {
             <DataFlowVisual />
           </MotionBox>
 
-          {/* Col 3 : carte MCP chat */}
-          <McpChatCard />
+          {/* Col 3 : génération automatique de lead */}
+          <AutomaticLeadCard />
+        </Grid>
+
+        {/* Section MCP data.gouv.fr */}
+        <Grid
+          mt={{ base: "20", md: "28" }}
+          p={{ base: "6", md: "10", xl: "12" }}
+          templateColumns={{ base: "1fr", lg: "minmax(0, 1.15fr) minmax(320px, .85fr)" }}
+          gap={{ base: "10", lg: "16" }}
+          alignItems="center"
+          bg="#F7F9FF"
+          border="1px solid #E3E8F5"
+          borderRadius={{ base: "2xl", md: "3xl" }}
+          position="relative"
+          overflow="hidden"
+        >
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: .25 }}
+            transition={{ duration: .6 }}
+            position="relative"
+            zIndex={1}
+          >
+            <HStack gap="3" mb="6">
+              <Box bg="white" border="1px solid #E1E7F3" borderRadius="xl" px="4" py="3" boxShadow="0 8px 24px rgba(7,27,99,.06)">
+                <Image
+                  src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Image%20du%20site/data-sources/data-gouv-logo-source-donnees-publiques.webp`}
+                  alt="Logo officiel data.gouv.fr"
+                  h="8"
+                  maxW="140px"
+                  objectFit="contain"
+                />
+              </Box>
+              <Box px="3" py="1.5" bg="#071FD6" color="white" borderRadius="full">
+                <Text fontSize="9px" fontWeight="900" letterSpacing=".08em">MCP OFFICIEL</Text>
+              </Box>
+            </HStack>
+
+            <Text fontSize={{ base: "2xl", md: "4xl" }} fontWeight="900" color="#071B63" lineHeight="1.05" letterSpacing="-.04em" maxW="620px">
+              Interrogez les données publiques françaises directement dans Pisteur
+            </Text>
+            <Text mt="4" fontSize={{ base: "sm", md: "md" }} color="#5D6988" lineHeight="1.75" maxW="620px">
+              Le protocole MCP connecte l’IA Pisteur au serveur officiel de data.gouv.fr. Une question en langage naturel suffit pour rechercher, croiser et restituer des données publiques à jour, avec leur source et leur fichier d’origine.
+            </Text>
+
+            <Grid mt="7" templateColumns={{ base: "1fr", sm: "repeat(3, 1fr)" }} gap="3">
+              {[
+                { icon: LuSearch, title: "Question naturelle", text: "Décrivez simplement la donnée recherchée." },
+                { icon: LuLink, title: "Connexion officielle", text: "Pisteur dialogue avec le serveur MCP de l’État." },
+                { icon: LuFileText, title: "Résultat traçable", text: "Chaque réponse conserve sa source officielle." },
+              ].map((item) => {
+                const Icon = item.icon
+                return (
+                  <Box key={item.title} bg="white" border="1px solid #E3E8F3" borderRadius="xl" p="4">
+                    <Box w="8" h="8" borderRadius="lg" bg="#EEF1FF" color="#071FD6" display="flex" alignItems="center" justifyContent="center" mb="3"><Icon size={15} /></Box>
+                    <Text fontSize="10px" fontWeight="900" color="#071B63" mb="1">{item.title}</Text>
+                    <Text fontSize="9px" color="#7A86A3" lineHeight="1.55">{item.text}</Text>
+                  </Box>
+                )
+              })}
+            </Grid>
+
+            <HStack mt="6" gap="2" color="#009B58"><LuShieldCheck size={15} /><Text fontSize="xs" fontWeight="700">Sources officielles · Données sécurisées · Réponses traçables</Text></HStack>
+          </MotionBox>
+
+          <Flex justifyContent={{ base: "center", lg: "flex-end" }} position="relative" zIndex={1}>
+            <McpChatCard />
+          </Flex>
         </Grid>
 
         {/* Footer RGPD */}

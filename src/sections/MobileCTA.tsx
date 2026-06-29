@@ -32,7 +32,7 @@ export function MobileCTA() {
           <a href={AUTH_URL}>Essayer gratuitement -- sans CB</a>
         </Button>
         <Box ml="3">
-          <Link to="/demo" style={{ textDecoration: "none" }}>
+          <Link to="/contact" style={{ textDecoration: "none" }}>
             <Text fontSize="xs" color="#323878" textDecoration="underline">
               Voir ma demo
             </Text>

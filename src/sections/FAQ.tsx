@@ -14,11 +14,12 @@ export function FAQ({ pagePath = "/tarifs" }: { pagePath?: string }) {
       <Box maxW="3xl" mx="auto">
         <VStack gap="4" textAlign="center" mb={{ base: "10", md: "16" }}>
           <Text
+            as="h2"
             fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
             fontWeight="extrabold"
             color="#000d4d"
           >
-            Questions frequentes
+            Questions fréquentes
           </Text>
         </VStack>
 

@@ -13,6 +13,7 @@ import {
   LuUser,
   LuZap,
 } from "react-icons/lu"
+import { RelatedLinks } from "@/components/RelatedLinks"
 import { Link } from "react-router-dom"
 import { PageHero } from "@/components/PageHero"
 import { SEO } from "@/components/SEO"
@@ -522,7 +523,7 @@ function SectorRow({ sector, index }: { sector: Sector; index: number }) {
           <Text fontSize="xs" fontWeight="700" color={sector.color} letterSpacing="wide">
             {sector.sub}
           </Text>
-          <Text fontSize="lg" fontWeight="900" color="#071B63" lineHeight="1.2">
+          <Text as="h2" fontSize="lg" fontWeight="900" color="#071B63" lineHeight="1.2">
             {sector.label}
           </Text>
         </Box>
@@ -646,10 +647,35 @@ export function CasUsagePage() {
   return (
     <>
       <SEO
-        title="Cas d'usage bâtiment et énergie"
-        description="Courtage en énergie, CVC, rénovation, solaire et services immobiliers : découvrez comment les équipes commerciales utilisent Pisteur."
+        title="Cas d'usage prospection bâtiment et énergie — Pisteur"
+        description="Courtage en énergie, CVC, rénovation, solaire, bureaux d'études et services immobiliers : découvrez comment les équipes commerciales utilisent Pisteur pour trouver leurs prospects."
         path="/cas-usage"
-        keywords={["cas usage prospection bâtiment", "prospection courtier énergie", "leads rénovation énergétique", "leads CVC"]}
+        keywords={[
+          "cas usage prospection bâtiment",
+          "prospection courtier énergie",
+          "leads rénovation énergétique",
+          "leads CVC chauffage climatisation",
+          "prospection solaire photovoltaïque",
+          "bureaux études prospection",
+          "services immobiliers leads",
+        ]}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Cas d'usage Pisteur par secteur",
+          description: "Liste des secteurs d'activité utilisant Pisteur pour leur prospection bâtiment et énergie.",
+          url: "https://pisteur.io/cas-usage",
+          numberOfItems: 7,
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Courtage en énergie", url: "https://pisteur.io/courtage-energie" },
+            { "@type": "ListItem", position: 2, name: "CVC & équipements", url: "https://pisteur.io/cvc-equipements" },
+            { "@type": "ListItem", position: 3, name: "Rénovation énergétique", url: "https://pisteur.io/renovation-energetique" },
+            { "@type": "ListItem", position: 4, name: "Solaire & ENR", url: "https://pisteur.io/solaire-enr" },
+            { "@type": "ListItem", position: 5, name: "Bureaux d'études", url: "https://pisteur.io/bureaux-etudes" },
+            { "@type": "ListItem", position: 6, name: "Services immobiliers", url: "https://pisteur.io/services-immobiliers" },
+            { "@type": "ListItem", position: 7, name: "Fournisseurs d'énergie", url: "https://pisteur.io/fournisseurs-energie" },
+          ],
+        }}
       />
       <PageHero
         eyebrow="CAS D'USAGE"
@@ -727,6 +753,14 @@ export function CasUsagePage() {
         </Box>
       </Box>
 
+      <RelatedLinks
+        title="ALLER PLUS LOIN"
+        links={[
+          { label: "Comment ça marche", to: "/comment-ca-marche", description: "De votre marché à votre liste de prospects qualifiés en moins de 30 secondes." },
+          { label: "Nos données", to: "/donnees", description: "50+ signaux officiels croisés pour qualifier chaque opportunité bâtiment." },
+          { label: "Tarifs", to: "/tarifs", description: "Démarrez gratuitement, sans carte bancaire ni engagement." },
+        ]}
+      />
       <Testimonials />
       <FAQ pagePath="/cas-usage" />
     </>

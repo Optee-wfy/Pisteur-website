@@ -115,6 +115,7 @@ export function DataSourceLogos() {
           NOS SOURCES DE DONNÉES
         </Text>
         <Text
+          as="h2"
           id="data-sources-title"
           fontSize={{ base: "2xl", md: "4xl" }}
           fontWeight="extrabold"

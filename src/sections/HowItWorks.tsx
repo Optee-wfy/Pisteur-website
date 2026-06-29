@@ -42,43 +42,11 @@ export function HowItWorks() {
   return (
     <Box
       as="section"
-      py={{ base: "20", md: "28" }}
+      py={{ base: "16", md: "24" }}
       px={{ base: "4", md: "6" }}
       bg="white"
     >
       <Box maxW="5xl" mx="auto">
-
-        {/* ── En-tête ── */}
-        <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.55 }}
-          mb={{ base: "14", md: "18" }}
-          textAlign="center"
-        >
-          <Text
-            fontSize={{ base: "3xl", md: "5xl" }}
-            fontWeight="900"
-            color="#071B63"
-            letterSpacing="-0.04em"
-            lineHeight="1.05"
-            mb="4"
-          >
-            Des prospects qualifiés.
-            <Box as="br" />
-            Instantanément.
-          </Text>
-          <Text
-            fontSize={{ base: "sm", md: "md" }}
-            color="#6b7280"
-            maxW="420px"
-            mx="auto"
-            lineHeight="1.7"
-          >
-            Ce que vos concurrents cherchent en 3 jours — vous l'obtenez en quelques secondes.
-          </Text>
-        </MotionBox>
 
         {/* ── Étapes ── */}
         <VStack gap="0" alignItems="stretch">
@@ -183,6 +151,7 @@ export function HowItWorks() {
             textAlign="center"
           >
             <Text
+              as="h2"
               fontSize={{ base: "lg", md: "xl" }}
               fontWeight="800"
               color="white"
@@ -216,7 +185,7 @@ export function HowItWorks() {
                 _hover={{ bg: "rgba(255,255,255,.06)", color: "white" }}
                 asChild
               >
-                <Link to="/demo">
+                <Link to="/contact">
                   <HStack gap="1.5">
                     <Text>Voir une démo</Text>
                     <LuArrowRight size={14} />
