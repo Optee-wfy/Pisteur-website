@@ -3,6 +3,7 @@ import { SEO } from "@/components/SEO";
 import { SafariWindow } from "@/components/SafariWindow";
 import { LeadPopup } from "@/components/LeadPopup";
 import { Hero } from "@/sections/Hero";
+import { Logos } from "@/sections/Logos";
 import { FinalCTA, MarketingStory } from "@/sections/MarketingStory";
 import { FAQ } from "@/sections/FAQ";
 import { ContactSection } from "@/sections/ContactSection";
@@ -12,6 +13,7 @@ import { Testimonials } from "@/sections/Testimonials";
 import { CompetitorCompare } from "@/sections/CompetitorCompare";
 import { DataSourceLogos } from "@/sections/DataSourceLogos";
 import { Pricing } from "@/sections/Pricing";
+import { AgentShowcase } from "@/sections/AgentShowcase";
 
 export function HomePage() {
   return (
@@ -73,6 +75,8 @@ export function HomePage() {
       />
       <LeadPopup />
       <Hero />
+      <Logos />
+      <AgentShowcase />
 
       {/* ── Démo interactive ── */}
       <Box py={{ base: "16", md: "24" }} px={{ base: "4", md: "6" }} bg="#f7faff">

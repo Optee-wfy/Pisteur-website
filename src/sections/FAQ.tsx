@@ -1,4 +1,5 @@
 import { Accordion, Box, Span, Text, VStack } from "@chakra-ui/react"
+import { Helmet } from "react-helmet-async"
 import { faqItems } from "@/data/content"
 import { useEffect, useState } from "react"
 import { publicRows } from "@/lib/backend"
@@ -9,8 +10,20 @@ export function FAQ({ pagePath = "/tarifs" }: { pagePath?: string }) {
   const [remoteItems, setRemoteItems] = useState<FaqRow[]>([])
   useEffect(() => { publicRows<FaqRow>("faq_items", `select=id,question,answer&page_path=eq.${encodeURIComponent(pagePath)}&active=eq.true&order=sort_order.asc`).then(setRemoteItems) }, [pagePath])
   const items = remoteItems.length ? remoteItems.map(item => ({ value: item.id, title: item.question, text: item.answer })) : faqItems
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: { "@type": "Answer", text: item.text },
+    })),
+  }
   return (
     <Box py={{ base: "16", md: "24" }} px={{ base: "4", md: "6" }} bg="#f6f8fb">
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
       <Box maxW="3xl" mx="auto">
         <VStack gap="4" textAlign="center" mb={{ base: "10", md: "16" }}>
           <Text

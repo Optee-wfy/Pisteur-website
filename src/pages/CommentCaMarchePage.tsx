@@ -9,6 +9,7 @@ import { ProcessComparison } from "@/sections/ProcessComparison"
 import { DataSources } from "@/sections/DataSources"
 import { Testimonials } from "@/sections/Testimonials"
 import { RelatedLinks } from "@/components/RelatedLinks"
+import { AgentTeaser } from "@/sections/AgentTeaser"
 
 export function CommentCaMarchePage() {
   return (
@@ -113,6 +114,8 @@ export function CommentCaMarchePage() {
           </SafariWindow>
         </Box>
       </Box>
+
+      <AgentTeaser />
 
       <ProcessComparison />
 

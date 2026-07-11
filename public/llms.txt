@@ -10,9 +10,14 @@ Pisteur analyse des données bâtiment, entreprise et contact afin de générer 
 
 Les signaux exploités incluent notamment les données énergétiques, permis de construire, appels d'offres, annonces légales, recrutements, données SIRENE/SIRET et données cadastrales. Pisteur croise ces signaux avec des règles métier et de l'intelligence artificielle.
 
+## Agent IA — Mathis
+
+Mathis est l'agent IA conversationnel de Pisteur. Vous lui donnez votre client idéal (ICP), vos zones et vos critères : il recherche vos prospects dans la base Pisteur, engage le contact par email et LinkedIn, relance intelligemment les prospects sans réponse, qualifie les échanges puis prend rendez-vous directement dans l'agenda commercial. Il fonctionne en continu, 24h/24 et 7j/7. Tarif : 1 500€/mois (offre de lancement à 1 000€/mois pour les 3 premiers clients).
+
 ## Pages importantes
 
 - Accueil : https://pisteur.tech/
+- Agent IA Mathis : https://pisteur.tech/agent-ia-prospection-batiment
 - Fonctionnement : https://pisteur.tech/comment-ca-marche
 - Données : https://pisteur.tech/donnees
 - Cas d'usage : https://pisteur.tech/cas-usage

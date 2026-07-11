@@ -8,6 +8,7 @@ const resources: Record<string, string> = {
   analytics: "analytics_events",
   faq: "faq_items",
   testimonials: "testimonials",
+  "agent-leads": "agent_leads",
 }
 
 function authorized(request: Request) {

@@ -49,6 +49,17 @@ export async function publicRows<T>(table: string, query = ""): Promise<T[]> {
   return response.json()
 }
 
+export async function publicRpc<T>(fn: string, args: Record<string, unknown> = {}): Promise<T | null> {
+  if (!supabaseUrl || !anonKey) return null
+  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${anonKey}`, apikey: anonKey, "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  })
+  if (!response.ok) return null
+  return response.json()
+}
+
 export function slugify(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 }

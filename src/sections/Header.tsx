@@ -149,6 +149,30 @@ export function Header() {
         {/* Nav desktop */}
         <HStack gap="5" display={{ base: "none", lg: "flex" }}>
 
+          {/* Lien mis en avant : agent IA Mathis */}
+          <Box asChild>
+            <Link to="/agent-ia-prospection-batiment" style={{ textDecoration: "none" }}>
+              <HStack
+                gap="1.5"
+                bg="linear-gradient(135deg, #071B63 0%, #071FD6 100%)"
+                color="white"
+                px="3"
+                py="1.5"
+                borderRadius="full"
+                fontSize="0.8rem"
+                fontWeight="700"
+                transition="all .2s"
+                _hover={{ transform: "translateY(-1px)", boxShadow: "0 6px 16px rgba(7,27,99,.3)" }}
+              >
+                <Image src="/mathis-agent-ia-avatar.webp" alt="Mathis" w="5" h="5" borderRadius="full" flexShrink={0} />
+                <Text>Mathis</Text>
+                <Box bg="#23c55e" color="white" px="1.5" borderRadius="full" fontSize="2xs" fontWeight="800" lineHeight="1.5">
+                  NEW
+                </Box>
+              </HStack>
+            </Link>
+          </Box>
+
           {/* Liens avant le dropdown */}
           {navBefore.map((link) => (
             <Box key={link.href} asChild>
@@ -366,6 +390,29 @@ export function Header() {
           borderColor="gray.100"
         >
           <Flex direction="column" gap="0">
+
+            {/* Lien mis en avant : agent IA Mathis — mobile */}
+            <Box asChild mb="3">
+              <Link to="/agent-ia-prospection-batiment" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none" }}>
+                <HStack
+                  justifyContent="center"
+                  gap="1.5"
+                  bg="linear-gradient(135deg, #071B63 0%, #071FD6 100%)"
+                  color="white"
+                  px="4"
+                  py="3"
+                  borderRadius="xl"
+                  fontSize="sm"
+                  fontWeight="700"
+                >
+                  <Image src="/mathis-agent-ia-avatar.webp" alt="Mathis" w="6" h="6" borderRadius="full" flexShrink={0} />
+                  <Text>Mathis</Text>
+                  <Box bg="#23c55e" color="white" px="1.5" borderRadius="full" fontSize="2xs" fontWeight="800" lineHeight="1.6">
+                    NEW
+                  </Box>
+                </HStack>
+              </Link>
+            </Box>
 
             {/* Liens avant le dropdown — mobile */}
             {navBefore.map((link) => (

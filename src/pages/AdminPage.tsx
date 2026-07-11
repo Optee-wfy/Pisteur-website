@@ -13,9 +13,11 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import {
   LuActivity,
+  LuBot,
   LuCalendar,
   LuEye,
   LuFileText,
+  LuFlame,
   LuGift,
   LuLayoutDashboard,
   LuMail,
@@ -43,6 +45,7 @@ type Row = Record<string, unknown> & { id: string; created_at?: string };
 const tabs = [
   { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard, description: "Vue d'ensemble des métriques clés — trafic, leads entrants et activité récente du site." },
   { id: "lead-popup", label: "Leads gratuits", icon: LuGift, description: "Demandes de leads gratuits reçues via le widget popup de la page d'accueil." },
+  { id: "agent-leads", label: "Offre Mathis", icon: LuBot, description: "Inscriptions à l'offre de lancement de l'agent IA Mathis — 1 000€/mois, 3 places." },
   { id: "contacts", label: "Contacts", icon: LuMail, description: "Formulaires de contact reçus depuis le site — prospects à qualifier et relancer." },
   { id: "support", label: "Support", icon: LuMessageSquare, description: "Demandes d'assistance envoyées par les utilisateurs, à traiter en priorité." },
   { id: "posts", label: "Blog", icon: LuFileText, description: "Articles publiés sur le blog — créez, éditez et gérez votre contenu SEO." },
@@ -626,18 +629,21 @@ function Dashboard({ code }: { code: string }) {
   const [analytics, setAnalytics] = useState<Row[]>([]);
   const [contacts, setContacts] = useState<Row[]>([]);
   const [posts, setPosts] = useState<Row[]>([]);
+  const [agentLeads, setAgentLeads] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = async () => {
     setLoading(true);
-    const [a, c, p] = await Promise.all([
+    const [a, c, p, al] = await Promise.all([
       adminRequest(code, "analytics").catch(() => ({ data: [] })),
       adminRequest(code, "contacts").catch(() => ({ data: [] })),
       adminRequest(code, "posts").catch(() => ({ data: [] })),
+      adminRequest(code, "agent-leads").catch(() => ({ data: [] })),
     ]);
     setAnalytics(a.data || []);
     setContacts(c.data || []);
     setPosts(p.data || []);
+    setAgentLeads(al.data || []);
     setLoading(false);
   };
 
@@ -728,7 +734,7 @@ function Dashboard({ code }: { code: string }) {
   return (
     <Box>
       {/* KPI Cards */}
-      <SimpleGrid columns={{ base: 2, xl: 5 }} gap="4" mb="5">
+      <SimpleGrid columns={{ base: 2, xl: 6 }} gap="4" mb="5">
         <KpiCard
           label="Sessions uniques"
           value={stats.sessions}
@@ -763,6 +769,13 @@ function Dashboard({ code }: { code: string }) {
           sub="formulaires démo"
           color="#0ea5e9"
           icon={LuCalendar}
+        />
+        <KpiCard
+          label="Offre Mathis"
+          value={`${agentLeads.length} / 3`}
+          sub="places réservées"
+          color="#c2410c"
+          icon={LuBot}
         />
       </SimpleGrid>
 
@@ -2124,6 +2137,78 @@ function RowList({
             </Box>
           );
         })}
+        {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
+      </VStack>
+    );
+  }
+
+  // ── Offre Mathis (agent IA) ──────────────────────────────────────────────
+  if (resource === "agent-leads") {
+    return (
+      <VStack alignItems="stretch" gap="3">
+        <HStack gap="2" bg="#fff1e8" color="#c2410c" px="4" py="2.5" borderRadius="xl" fontSize="xs" fontWeight="bold">
+          <LuFlame size={13} />
+          <Text>{rows.length} / 3 places prises sur l'offre de lancement à 1 000€/mois</Text>
+        </HStack>
+        {pageRows.map((row) => {
+          const fullName = [row.first_name, row.last_name].filter(Boolean).map(String).join(" ");
+          const initials = (fullName || String(row.email || "?")).slice(0, 2).toUpperCase();
+          return (
+            <Box key={row.id} bg="white" borderRadius="xl" border="1px solid #e8edf5" overflow="hidden">
+              <Flex p="5" gap="4" alignItems="flex-start">
+                <Box
+                  w="11" h="11" borderRadius="full" bg="#e0e7ff" color="#071FD6"
+                  display="flex" alignItems="center" justifyContent="center"
+                  fontWeight="bold" fontSize="sm" flexShrink={0}
+                >
+                  {initials}
+                </Box>
+                <Box flex="1" minW="0">
+                  <Flex alignItems="flex-start" justifyContent="space-between" gap="3" flexWrap="wrap">
+                    <Box>
+                      <Text fontWeight="bold" color="#000d4d" fontSize="sm">{fullName || String(row.email || "Contact")}</Text>
+                      {row.company && <Text fontSize="xs" color="#9aaabb">{String(row.company)}</Text>}
+                    </Box>
+                    <Text fontSize="2xs" color="#9aaabb" flexShrink={0}>
+                      {row.created_at ? new Date(String(row.created_at)).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : ""}
+                    </Text>
+                  </Flex>
+                  <Flex gap="2" mt="2.5" flexWrap="wrap">
+                    <Box px="2.5" py="1" bg="#fff1e8" color="#c2410c" borderRadius="full" fontSize="2xs" fontWeight="bold">🔥 Offre lancement 1 000€/mo</Box>
+                    {row.activity && (
+                      <Box px="2.5" py="1" bg="#e0e7ff" color="#3730a3" borderRadius="full" fontSize="2xs" fontWeight="bold">{String(row.activity)}</Box>
+                    )}
+                    <Box px="2.5" py="1" bg="#f1f5f9" color="#475569" borderRadius="full" fontSize="2xs" fontWeight="bold">
+                      {String(row.status || "new") === "new" ? "Nouveau" : String(row.status)}
+                    </Box>
+                  </Flex>
+                  {row.message && (
+                    <Box mt="3" p="3" bg="#f8fafb" borderRadius="lg" borderLeft="3px solid #e2e8f0">
+                      <Text fontSize="xs" color="#586580" lineHeight="1.6" noOfLines={3}>{String(row.message)}</Text>
+                    </Box>
+                  )}
+                  <HStack mt="3" gap="2">
+                    {row.email && (
+                      <Button asChild size="sm" bg="#071FD6" color="white" fontWeight="bold" borderRadius="lg" _hover={{ bg: "#0518a8" }}>
+                        <a href={`mailto:${String(row.email)}`}>✉ Répondre</a>
+                      </Button>
+                    )}
+                    {row.phone && (
+                      <Button asChild size="sm" {...lightButtonStyles} borderRadius="lg">
+                        <a href={`tel:${String(row.phone)}`}>📞 {String(row.phone)}</a>
+                      </Button>
+                    )}
+                  </HStack>
+                </Box>
+              </Flex>
+            </Box>
+          );
+        })}
+        {!rows.length && (
+          <Box bg="white" borderRadius="xl" border="1px dashed #d1d9ef" p="10" textAlign="center">
+            <Text color="#9aaabb" fontSize="sm">Aucune inscription à l'offre Mathis pour le moment.</Text>
+          </Box>
+        )}
         {totalPages > 1 && <Pagination page={page} total={totalPages} onChange={setPage} />}
       </VStack>
     );

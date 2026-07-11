@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Ancienne URL de la page agent IA — redirection permanente vers la nouvelle
+[[redirects]]
+  from = "/agent-ia"
+  to = "/agent-ia-prospection-batiment"
+  status = 301
+  force = true
+
 # SPA routing — toutes les URLs redirigées vers index.html (React Router gère le reste)
 [[redirects]]
   from = "/*"

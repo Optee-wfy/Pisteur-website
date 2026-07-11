@@ -10,7 +10,7 @@ Deno.serve(async (request) => {
 
   try {
     const body = await request.json();
-    const kind = body.kind === "support" ? "support" : "lead";
+    const kind = body.kind === "support" ? "support" : body.kind === "agent-mathis" ? "agent-mathis" : "lead";
     if (!body.email || !String(body.email).includes("@"))
       return json({ error: "Email invalide" }, 400);
 
@@ -55,6 +55,34 @@ Deno.serve(async (request) => {
             to: notificationEmail,
             subject: `[Support Pisteur] ${body.subject}`,
             html: `<h2>Nouvelle demande support</h2><p><strong>${escapeHtml(name)}</strong> — ${escapeHtml(body.email)}</p><p>${escapeHtml(body.message)}</p>`,
+          }),
+        ]);
+    } else if (kind === "agent-mathis") {
+      if (!body.firstName || !body.lastName || !body.company)
+        return json({ error: "Champs requis manquants" }, 400);
+      const payload = {
+        first_name: body.firstName,
+        last_name: body.lastName,
+        email: body.email,
+        phone: body.phone || null,
+        company: body.company,
+        activity: body.activity || null,
+        message: body.message || null,
+        offer: "launch-1000",
+      };
+      const { error } = await supabase.from("agent_leads").insert(payload);
+      if (error) throw error;
+      if (emailEnabled && notificationEmail)
+        await Promise.all([
+          sendEmail({
+            to: body.email,
+            subject: "Votre place pour l'offre de lancement Mathis est réservée",
+            html: confirmationEmail(body.firstName, "agent-mathis"),
+          }),
+          sendEmail({
+            to: notificationEmail,
+            subject: `[Offre Mathis] ${body.firstName} ${body.lastName} — ${body.company}`,
+            html: `<h2>Nouvelle inscription offre de lancement Mathis (1000€/mois)</h2><p><strong>${escapeHtml(body.firstName)} ${escapeHtml(body.lastName)}</strong> — ${escapeHtml(body.company)}</p><p>${escapeHtml(body.email)} · ${escapeHtml(body.phone || "Sans téléphone")}</p><p>Activité : ${escapeHtml(body.activity || "Non précisée")}</p>${body.message ? `<p>Message : ${escapeHtml(body.message)}</p>` : ""}`,
           }),
         ]);
     } else {

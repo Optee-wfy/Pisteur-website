@@ -16,6 +16,7 @@ import { AdminPage } from "@/pages/AdminPage"
 import { BlogArticlePage } from "@/pages/BlogArticlePage"
 import { VerticalPage } from "@/pages/VerticalPage"
 import { ContactPage } from "@/pages/ContactPage"
+import { AgentPage } from "@/pages/AgentPage"
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/blog/:slug" element={<BlogArticlePage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/agent-ia-prospection-batiment" element={<AgentPage />} />
             <Route path="/mentions-legales" element={<LegalPage page="mentions" />} />
             <Route path="/confidentialite" element={<LegalPage page="confidentialite" />} />
             <Route path="/cgu" element={<LegalPage page="cgu" />} />
