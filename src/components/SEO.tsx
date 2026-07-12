@@ -11,7 +11,7 @@ interface SEOProps {
 }
 
 export function SEO({ title, description, path, keywords = [], type = "website", structuredData, noIndex = false }: SEOProps) {
-  const baseUrl = "https://pisteur.tech"
+  const baseUrl = "https://pisteur.io"
   const fullTitle = `${title} | Pisteur — Prospection bâtiment intelligente`
   const canonical = `${baseUrl}${path}`
   const image = `${baseUrl}/logo-pisteur-ai.webp`

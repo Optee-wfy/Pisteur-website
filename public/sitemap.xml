@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://pisteur.tech/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://pisteur.tech/agent-ia-prospection-batiment</loc><changefreq>weekly</changefreq><priority>0.95</priority></url>
-  <url><loc>https://pisteur.tech/comment-ca-marche</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://pisteur.tech/donnees</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://pisteur.tech/tarifs</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://pisteur.tech/cas-usage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://pisteur.tech/demo</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://pisteur.tech/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://pisteur.tech/mentions-legales</loc><priority>0.2</priority></url>
-  <url><loc>https://pisteur.tech/confidentialite</loc><priority>0.2</priority></url>
-  <url><loc>https://pisteur.tech/cgu</loc><priority>0.2</priority></url>
+  <url><loc>https://pisteur.io/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://pisteur.io/agent-ia-prospection-batiment</loc><changefreq>weekly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://pisteur.io/comment-ca-marche</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pisteur.io/donnees</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pisteur.io/tarifs</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pisteur.io/cas-usage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://pisteur.io/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://pisteur.io/courtage-energie</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/renovation-energetique</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/cvc-equipements</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/solaire-enr</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/bureaux-etudes</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/services-immobiliers</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/fournisseurs-energie</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://pisteur.io/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://pisteur.io/support</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://pisteur.io/mentions-legales</loc><priority>0.2</priority></url>
+  <url><loc>https://pisteur.io/confidentialite</loc><priority>0.2</priority></url>
+  <url><loc>https://pisteur.io/cgu</loc><priority>0.2</priority></url>
 </urlset>
-

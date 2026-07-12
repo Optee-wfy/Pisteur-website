@@ -230,7 +230,7 @@ export function AgentPage() {
               price: "1000",
               priceCurrency: "EUR",
               availability: "https://schema.org/LimitedAvailability",
-              url: "https://pisteur.tech/agent-ia-prospection-batiment",
+              url: "https://pisteur.io/agent-ia-prospection-batiment",
               priceSpecification: {
                 "@type": "UnitPriceSpecification",
                 price: "1000",
@@ -245,7 +245,7 @@ export function AgentPage() {
               price: "1500",
               priceCurrency: "EUR",
               availability: "https://schema.org/InStock",
-              url: "https://pisteur.tech/agent-ia-prospection-batiment",
+              url: "https://pisteur.io/agent-ia-prospection-batiment",
               priceSpecification: {
                 "@type": "UnitPriceSpecification",
                 price: "1500",

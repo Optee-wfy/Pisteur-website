@@ -39,7 +39,7 @@ const signalIcons = [LuHouse, LuBuilding2, LuFactory, LuFileDigit, LuZap, LuBadg
 function AnimatedSignalFlow() {
   return (
     <Box position="relative" minH={{ base: "300px", md: "420px" }} overflow="hidden" aria-label="Les signaux marché sont analysés par l'intelligence Pisteur">
-      <Image src="/pisteur-data-flow.png" alt="" position="absolute" inset="0" w="full" h="full" objectFit="cover" objectPosition="center" opacity=".42" />
+      <Image src="/pisteur-data-flow.webp" alt="" position="absolute" inset="0" w="full" h="full" objectFit="cover" objectPosition="center" opacity=".42" />
       {Array.from({ length: 18 }).map((_, i) => {
         const Icon = signalIcons[i % signalIcons.length]
         const top = 7 + ((i * 17) % 82)

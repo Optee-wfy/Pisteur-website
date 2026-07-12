@@ -203,7 +203,7 @@ function DataFlowVisual() {
         transform="translateX(-67%)"
       >
         <Image
-          src="/pisteur-data-flow.png"
+          src="/pisteur-data-flow.webp"
           alt="Flux des données françaises vers la base Pisteur"
           position="absolute"
           inset="0"

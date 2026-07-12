@@ -16,14 +16,24 @@ Mathis est l'agent IA conversationnel de Pisteur. Vous lui donnez votre client i
 
 ## Pages importantes
 
-- Accueil : https://pisteur.tech/
-- Agent IA Mathis : https://pisteur.tech/agent-ia-prospection-batiment
-- Fonctionnement : https://pisteur.tech/comment-ca-marche
-- Données : https://pisteur.tech/donnees
-- Cas d'usage : https://pisteur.tech/cas-usage
-- Tarifs : https://pisteur.tech/tarifs
-- Démonstration : https://pisteur.tech/demo
-- Blog : https://pisteur.tech/blog
+- Accueil : https://pisteur.io/
+- Agent IA Mathis : https://pisteur.io/agent-ia-prospection-batiment
+- Fonctionnement : https://pisteur.io/comment-ca-marche
+- Données : https://pisteur.io/donnees
+- Cas d'usage : https://pisteur.io/cas-usage
+- Tarifs : https://pisteur.io/tarifs
+- Blog : https://pisteur.io/blog
+- Contact : https://pisteur.io/contact
+
+## Pages par secteur
+
+- Courtage en énergie : https://pisteur.io/courtage-energie
+- Rénovation énergétique : https://pisteur.io/renovation-energetique
+- CVC & équipements : https://pisteur.io/cvc-equipements
+- Solaire & ENR : https://pisteur.io/solaire-enr
+- Bureaux d'études : https://pisteur.io/bureaux-etudes
+- Services immobiliers : https://pisteur.io/services-immobiliers
+- Fournisseurs d'énergie : https://pisteur.io/fournisseurs-energie
 
 ## Contact
 
