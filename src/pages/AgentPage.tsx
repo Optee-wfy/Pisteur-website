@@ -531,14 +531,14 @@ export function AgentPage() {
               <Text color="whiteAlpha.700" fontSize="xs" fontWeight="800" letterSpacing="widest">
                 OFFRE DE LANCEMENT
               </Text>
-              <HStack alignItems="baseline" gap="3">
-                <Text fontSize="2xl" color="whiteAlpha.500" textDecoration="line-through" fontWeight="600">
+              <HStack alignItems="baseline" gap="3" flexWrap="wrap" justifyContent="center">
+                <Text fontSize="2xl" color="whiteAlpha.500" textDecoration="line-through" fontWeight="600" whiteSpace="nowrap">
                   1 500€
                 </Text>
-                <Text fontSize={{ base: "5xl", md: "6xl" }} fontWeight="900" color="white" letterSpacing="-0.04em">
+                <Text fontSize={{ base: "5xl", md: "6xl" }} fontWeight="900" color="white" letterSpacing="-0.04em" whiteSpace="nowrap">
                   1 000€
                 </Text>
-                <Text color="whiteAlpha.700" fontSize="sm">/ mois</Text>
+                <Text color="whiteAlpha.700" fontSize="sm" whiteSpace="nowrap">/ mois</Text>
               </HStack>
               <Text color="whiteAlpha.800" fontSize="sm" textAlign="center" maxW="sm" lineHeight="1.65">
                 Réservé aux 3 premiers clients. Tarif verrouillé tant que vous restez client — ensuite, Mathis passe à 1 500€/mois.
