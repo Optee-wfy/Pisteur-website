@@ -1,42 +1,33 @@
 # Pisteur
 
-Pisteur est un logiciel SaaS français de prospection B2B pour les entreprises qui vendent aux bâtiments : courtiers et fournisseurs d'énergie, rénovation énergétique, CVC, solaire, bureaux d'études et services immobiliers.
+> Pisteur est un logiciel SaaS français de prospection B2B pour les entreprises qui vendent aux bâtiments : courtiers et fournisseurs d'énergie, rénovation énergétique, CVC, solaire, bureaux d'études et services immobiliers.
 
-## Fonction principale
+Pisteur analyse des données bâtiment, entreprise et contact afin de générer des listes de prospects qualifiés. Une fiche peut inclure l'adresse du bâtiment, son DPE, son chauffage, sa consommation énergétique, son gestionnaire et les coordonnées du décideur. Les signaux exploités incluent notamment les données énergétiques, permis de construire, appels d'offres, annonces légales, recrutements, données SIRENE/SIRET et données cadastrales. Pisteur croise ces signaux avec des règles métier et de l'intelligence artificielle.
 
-Pisteur analyse des données bâtiment, entreprise et contact afin de générer des listes de prospects qualifiés. Une fiche peut inclure l'adresse du bâtiment, son DPE, son chauffage, sa consommation énergétique, son gestionnaire et les coordonnées du décideur.
-
-## Sources et méthode
-
-Les signaux exploités incluent notamment les données énergétiques, permis de construire, appels d'offres, annonces légales, recrutements, données SIRENE/SIRET et données cadastrales. Pisteur croise ces signaux avec des règles métier et de l'intelligence artificielle.
-
-## Agent IA — Mathis
-
-Mathis est l'agent IA conversationnel de Pisteur. Vous lui donnez votre client idéal (ICP), vos zones et vos critères : il recherche vos prospects dans la base Pisteur, engage le contact par email et LinkedIn, relance intelligemment les prospects sans réponse, qualifie les échanges puis prend rendez-vous directement dans l'agenda commercial. Il fonctionne en continu, 24h/24 et 7j/7. Tarif : 1 500€/mois (offre de lancement à 1 000€/mois pour les 3 premiers clients).
+Mathis est l'agent IA conversationnel de Pisteur : vous lui donnez votre client idéal (ICP), vos zones et vos critères, il recherche vos prospects, engage le contact par email et LinkedIn, relance intelligemment les prospects sans réponse, qualifie les échanges puis prend rendez-vous directement dans l'agenda commercial. Il fonctionne en continu, 24h/24 et 7j/7. Tarif : 1 500€/mois (offre de lancement à 1 000€/mois pour les 3 premiers clients).
 
 ## Pages importantes
 
-- Accueil : https://pisteur.io/
-- Agent IA Mathis : https://pisteur.io/agent-ia-prospection-batiment
-- Fonctionnement : https://pisteur.io/comment-ca-marche
-- Données : https://pisteur.io/donnees
-- Cas d'usage : https://pisteur.io/cas-usage
-- Tarifs : https://pisteur.io/tarifs
-- Blog : https://pisteur.io/blog
-- Contact : https://pisteur.io/contact
+- [Accueil](https://pisteur.io/): présentation générale de Pisteur et de son moteur de prospection bâtiment
+- [Agent IA Mathis](https://pisteur.io/agent-ia-prospection-batiment): agent IA conversationnel qui automatise la prospection de bout en bout
+- [Fonctionnement](https://pisteur.io/comment-ca-marche): explication du fonctionnement de Pisteur étape par étape
+- [Données](https://pisteur.io/donnees): sources et signaux bâtimentaires exploités par Pisteur
+- [Cas d'usage](https://pisteur.io/cas-usage): exemples concrets d'utilisation de Pisteur par secteur
+- [Tarifs](https://pisteur.io/tarifs): grille tarifaire de Pisteur
+- [Blog](https://pisteur.io/blog): articles et guides sur la prospection bâtiment et énergie
+- [Contact](https://pisteur.io/contact): formulaire de contact de l'équipe Pisteur
 
 ## Pages par secteur
 
-- Courtage en énergie : https://pisteur.io/courtage-energie
-- Rénovation énergétique : https://pisteur.io/renovation-energetique
-- CVC & équipements : https://pisteur.io/cvc-equipements
-- Solaire & ENR : https://pisteur.io/solaire-enr
-- Bureaux d'études : https://pisteur.io/bureaux-etudes
-- Services immobiliers : https://pisteur.io/services-immobiliers
-- Fournisseurs d'énergie : https://pisteur.io/fournisseurs-energie
+- [Courtage en énergie](https://pisteur.io/courtage-energie): Pisteur pour les courtiers et fournisseurs d'énergie
+- [Rénovation énergétique](https://pisteur.io/renovation-energetique): Pisteur pour les professionnels de la rénovation énergétique
+- [CVC & équipements](https://pisteur.io/cvc-equipements): Pisteur pour les installateurs de chauffage, ventilation et climatisation
+- [Solaire & ENR](https://pisteur.io/solaire-enr): Pisteur pour les professionnels du solaire et des énergies renouvelables
+- [Bureaux d'études](https://pisteur.io/bureaux-etudes): Pisteur pour les bureaux d'études énergétiques
+- [Services immobiliers](https://pisteur.io/services-immobiliers): Pisteur pour les syndics et gestionnaires immobiliers
+- [Fournisseurs d'énergie](https://pisteur.io/fournisseurs-energie): Pisteur pour les fournisseurs d'énergie
 
 ## Contact
 
-- Email : contact@optee.io
-- LinkedIn : https://www.linkedin.com/company/optee
-
+- [Email](mailto:contact@optee.io): contact@optee.io
+- [LinkedIn](https://www.linkedin.com/company/optee): page LinkedIn officielle de l'éditeur (Optee)

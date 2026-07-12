@@ -364,6 +364,9 @@ export function Header() {
         {/* Burger mobile */}
         <Box
           as="button"
+          type="button"
+          aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={mobileOpen}
           display={{ base: "flex", lg: "none" }}
           alignItems="center"
           justifyContent="center"

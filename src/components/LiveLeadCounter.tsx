@@ -16,6 +16,7 @@ export function LiveLeadCounter({ value }: LiveLeadCounterProps) {
       alignItems="center"
       justifyContent="center"
       gap="0.08em"
+      role="img"
       aria-label={`${value} leads générés à ce jour`}
       style={{ perspective: "500px" }}
     >
