@@ -1,14 +1,13 @@
 import { Box, Button, Flex, HStack, Image, Input, Text, Textarea, VStack } from "@chakra-ui/react"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { LuCheck, LuFlame } from "react-icons/lu"
-import { submitContact, publicRpc } from "@/lib/backend"
+import { submitContact } from "@/lib/backend"
 
 const MotionBox = motion.create(Box)
 const TOTAL_SPOTS = 3
 
 export function AgentOfferForm() {
-  const [taken, setTaken] = useState<number | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
@@ -22,15 +21,6 @@ export function AgentOfferForm() {
     message: "",
   })
 
-  useEffect(() => {
-    publicRpc<number>("agent_leads_offer_count", { p_offer: "launch-1000" }).then((count) => {
-      if (typeof count === "number") setTaken(count)
-    })
-  }, [])
-
-  const spotsLeft = taken === null ? null : Math.max(TOTAL_SPOTS - taken, 0)
-  const soldOut = spotsLeft === 0
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setSubmitting(true)
@@ -42,7 +32,6 @@ export function AgentOfferForm() {
         source: "agent-ia-page",
       })
       setSubmitted(true)
-      setTaken((current) => (current === null ? null : current + 1))
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -64,25 +53,19 @@ export function AgentOfferForm() {
           transition={{ duration: 0.6 }}
         >
           <VStack gap="3" textAlign="center" mb="8">
-            {spotsLeft !== null && (
-              <HStack
-                gap="1.5"
-                bg={soldOut ? "#f1f5f9" : "#fff1e8"}
-                color={soldOut ? "#64748b" : "#c2410c"}
-                px="3.5"
-                py="1.5"
-                borderRadius="full"
-                fontSize="xs"
-                fontWeight="800"
-              >
-                <LuFlame size={13} />
-                <Text>
-                  {soldOut
-                    ? "Offre de lancement complète"
-                    : `Plus que ${spotsLeft} place${spotsLeft > 1 ? "s" : ""} sur ${TOTAL_SPOTS} à 1 000€/mois`}
-                </Text>
-              </HStack>
-            )}
+            <HStack
+              gap="1.5"
+              bg="#fff1e8"
+              color="#c2410c"
+              px="3.5"
+              py="1.5"
+              borderRadius="full"
+              fontSize="xs"
+              fontWeight="800"
+            >
+              <LuFlame size={13} />
+              <Text>{`Offre de lancement — ${TOTAL_SPOTS} places à 1 000€/mois`}</Text>
+            </HStack>
             <Text as="h2" fontSize={{ base: "2xl", md: "3xl" }} fontWeight="900" color="#071B63" letterSpacing="-0.03em">
               Réservez votre place.
             </Text>
@@ -123,15 +106,6 @@ export function AgentOfferForm() {
                 </Text>
                 <Text color="#6b7280" fontSize="sm" lineHeight="1.7">
                   L’équipe Pisteur vous contacte rapidement pour activer Mathis sur votre compte et le configurer sur votre client idéal.
-                </Text>
-              </VStack>
-            ) : soldOut ? (
-              <VStack gap="3" py="6" textAlign="center">
-                <Text fontWeight="800" fontSize="lg" color="#071B63">
-                  Les 3 places à 1 000€/mois sont prises.
-                </Text>
-                <Text color="#6b7280" fontSize="sm" lineHeight="1.7">
-                  Laissez-nous votre email pour être prévenu si une place se libère, ou découvrez Mathis au tarif standard de 1 500€/mois.
                 </Text>
               </VStack>
             ) : (

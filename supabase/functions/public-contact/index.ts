@@ -86,19 +86,22 @@ Deno.serve(async (request) => {
           }),
         ]);
     } else {
-      if (!body.firstName || !body.lastName || !body.consent)
+      const isLeadPopup = body.kind === "lead-popup";
+      if (!body.firstName || (!isLeadPopup && (!body.lastName || !body.consent)))
         return json({ error: "Champs requis manquants" }, 400);
       const payload = {
         first_name: body.firstName,
-        last_name: body.lastName,
+        last_name: body.lastName || "",
         email: body.email,
         phone: body.phone || null,
         company: body.company || null,
-        activity: body.activity || null,
+        activity: body.activity || body.sector || null,
         zone: body.zone || null,
-        message: body.message || null,
+        message: body.buildingType
+          ? `Type de bâtiment : ${body.buildingType}${body.message ? ` — ${body.message}` : ""}`
+          : body.message || null,
         source: body.source || "demo",
-        consent: Boolean(body.consent),
+        consent: isLeadPopup ? true : Boolean(body.consent),
       };
       const { error } = await supabase.from("contacts").insert(payload);
       if (error) throw error;
